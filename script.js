@@ -117,6 +117,23 @@ function renderRecipes(category = "all") {
     });
     grid.appendChild(card);
   });
+
+  animateCardsIn();
+}
+
+function animateCardsIn() {
+  const cards = grid.querySelectorAll(".recipe-card");
+  if (typeof anime === "undefined") return;
+  anime.set(cards, { opacity: 0, translateY: 28, scale: 0.96 });
+  anime({
+    targets: cards,
+    opacity: [0, 1],
+    translateY: [28, 0],
+    scale: [0.96, 1],
+    delay: anime.stagger(70),
+    duration: 600,
+    easing: "cubicBezier(0.22, 1, 0.36, 1)"
+  });
 }
 
 filterBtns.forEach(btn => {
@@ -126,6 +143,8 @@ filterBtns.forEach(btn => {
     renderRecipes(btn.dataset.category);
   });
 });
+
+let isAnimatingOut = false;
 
 function openModal(recipe) {
   document.getElementById("modalCategory").textContent = recipe.categoryLabel;
@@ -147,21 +166,64 @@ function openModal(recipe) {
     tipBox.hidden = true;
   }
 
-  modal.classList.add("is-open");
+  modal.hidden = false;
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
+
+  if (typeof anime !== "undefined") {
+    const backdrop = modal.querySelector(".modal-backdrop");
+    const card = modal.querySelector(".modal-card");
+    const header = modal.querySelector(".modal-header");
+    const body = modal.querySelector(".modal-body");
+    anime.set(backdrop, { opacity: 0 });
+    anime.set(card, { opacity: 0, translateY: 24, scale: 0.92 });
+    anime.set([header, body], { opacity: 0, translateY: 12 });
+
+    const tl = anime.timeline({ easing: "cubicBezier(0.22, 1, 0.36, 1)" });
+    tl.add({ targets: backdrop, opacity: [0, 1], duration: 300 })
+      .add({ targets: card, opacity: [0, 1], translateY: [24, 0], scale: [0.92, 1], duration: 500, elasticity: 600 }, "-=200")
+      .add({ targets: [header, body], opacity: [0, 1], translateY: [12, 0], duration: 450, delay: anime.stagger(90) }, "-=300");
+  }
 }
 
 function closeModal() {
-  modal.classList.remove("is-open");
-  modal.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
+  if (typeof anime === "undefined") {
+    modal.hidden = true;
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    return;
+  }
+  if (isAnimatingOut) return;
+  isAnimatingOut = true;
+  const card = modal.querySelector(".modal-card");
+  const backdrop = modal.querySelector(".modal-backdrop");
+
+  anime({
+    targets: card,
+    opacity: [1, 0],
+    translateY: [0, 16],
+    scale: [1, 0.95],
+    duration: 280,
+    easing: "cubicBezier(0.4, 0, 1, 1)"
+  });
+  anime({
+    targets: backdrop,
+    opacity: [1, 0],
+    duration: 280,
+    easing: "linear",
+    complete: () => {
+      modal.hidden = true;
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      isAnimatingOut = false;
+    }
+  });
 }
 
 document.querySelector(".modal-close").addEventListener("click", closeModal);
 document.querySelector(".modal-backdrop").addEventListener("click", closeModal);
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+  if (e.key === "Escape" && !modal.hidden) closeModal();
 });
 
 renderRecipes();
