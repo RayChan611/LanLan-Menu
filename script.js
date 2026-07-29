@@ -147,19 +147,21 @@ function openModal(recipe) {
     tipBox.hidden = true;
   }
 
-  modal.hidden = false;
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
 }
 
 function closeModal() {
-  modal.hidden = true;
+  modal.classList.remove("is-open");
+  modal.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
 }
 
 document.querySelector(".modal-close").addEventListener("click", closeModal);
 document.querySelector(".modal-backdrop").addEventListener("click", closeModal);
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape" && !modal.hidden) closeModal();
+  if (e.key === "Escape" && modal.classList.contains("is-open")) closeModal();
 });
 
 renderRecipes();
