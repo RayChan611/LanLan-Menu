@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>澜澜菜谱 LanLan Menu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>澜澜菜谱</h1>
+      <p class="subtitle">LanLan's Cute Kitchen · 把爱做成一道道菜</p>
+      <div class="hero-tags">
+        <span>🍳 家常</span>
+        <span>🍰 甜品</span>
+        <span>🍲 汤羹</span>
+        <span>🥢 小食</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="filters">
+      <button class="filter-btn active" data-category="all">全部</button>
+      <button class="filter-btn" data-category="breakfast">早餐</button>
+      <button class="filter-btn" data-category="home">家常菜</button>
+      <button class="filter-btn" data-category="soup">汤羹</button>
+      <button class="filter-btn" data-category="dessert">甜品</button>
+      <button class="filter-btn" data-category="snack">小食</button>
+    </section>
+
+    <section class="recipes-grid" id="recipesGrid">
+      <!-- Recipes injected by JS -->
+    </section>
+
+    <div class="empty-state" id="emptyState" hidden>
+      <div class="empty-emoji">🍽️</div>
+      <p>这个分类还没有菜谱哦～</p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Made with 🧡 by LanLan · 记录每一次厨房的小幸福</p>
+  </footer>
+
+  <div class="modal" id="recipeModal" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <button class="modal-close" aria-label="关闭">&times;</button>
+      <div class="modal-header">
+        <span class="modal-category" id="modalCategory"></span>
+        <h2 id="modalTitle"></h2>
+        <div class="modal-meta">
+          <span id="modalTime"></span>
+          <span id="modalDifficulty"></span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="ingredients">
+          <h3>🥬 食材</h3>
+          <ul id="modalIngredients"></ul>
+        </div>
+        <div class="steps">
+          <h3>👩‍🍳 做法</h3>
+          <ol id="modalSteps"></ol>
+        </div>
+        <div class="tip" id="modalTip" hidden>
+          <h3>💡 小贴士</h3>
+          <p></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
