@@ -72,90 +72,147 @@ const recipes = [
   }
 ];
 
+// 分类样式映射（照片区渐变底）
+const categoryClass = {
+  home: "cat-home",
+  soup: "cat-soup",
+  breakfast: "cat-breakfast",
+  dessert: "cat-dessert",
+  snack: "cat-snack"
+};
+
 const grid = document.getElementById("recipesGrid");
 const emptyState = document.getElementById("emptyState");
-const filterBtns = document.querySelectorAll(".filter-btn");
+const catBar = document.getElementById("catBar");
+const searchInput = document.getElementById("searchInput");
+const countEl = document.getElementById("recipeCount");
 const modal = document.getElementById("recipeModal");
 
-function renderRecipes(category = "all") {
-  grid.innerHTML = "";
-  const filtered = category === "all"
-    ? recipes
-    : recipes.filter(r => r.category === category);
+let currentCategory = "all";
+let currentQuery = "";
+const favState = new Set();
 
-  if (filtered.length === 0) {
+const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// ---- 动态生成分类导航 ----
+function buildCategories() {
+  const present = [...new Set(recipes.map(r => r.category))];
+  const cats = [{ key: "all", label: "全部" }, ...present.map(c => {
+    const sample = recipes.find(r => r.category === c);
+    return { key: c, label: sample.categoryLabel };
+  })];
+
+  catBar.innerHTML = "";
+  cats.forEach((c, i) => {
+    const btn = document.createElement("button");
+    btn.className = "cat-btn" + (i === 0 ? " active" : "");
+    btn.textContent = c.label;
+    btn.dataset.category = c.key;
+    btn.addEventListener("click", () => {
+      currentCategory = c.key;
+      catBar.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      if (typeof anime !== "undefined" && !prefersReduced) {
+        anime({ targets: btn, scale: [1, 0.92, 1], duration: 400, easing: "spring(1, 80, 12, 0)" });
+      }
+      renderRecipes();
+    });
+    catBar.appendChild(btn);
+  });
+}
+
+// ---- 过滤逻辑 ----
+function getFiltered() {
+  const q = currentQuery.trim().toLowerCase();
+  return recipes.filter(r => {
+    const okCat = currentCategory === "all" || r.category === currentCategory;
+    const okQ = !q || r.title.toLowerCase().includes(q);
+    return okCat && okQ;
+  });
+}
+
+function renderRecipes() {
+  const list = getFiltered();
+  grid.innerHTML = "";
+  countEl.textContent = `共 ${list.length} 道`;
+
+  if (list.length === 0) {
     grid.hidden = true;
     emptyState.hidden = false;
     return;
   }
-
   grid.hidden = false;
   emptyState.hidden = true;
 
-  filtered.forEach(recipe => {
+  list.forEach(recipe => {
     const card = document.createElement("article");
     card.className = "recipe-card";
     card.setAttribute("role", "button");
     card.setAttribute("tabindex", "0");
+
+    const isFav = favState.has(recipe.id);
     card.innerHTML = `
-      <div class="card-emoji-wrap">
+      <div class="card-photo ${categoryClass[recipe.category] || "cat-home"}">
+        <button class="card-fav ${isFav ? "active" : ""}" aria-label="收藏" data-fav="${recipe.id}">${isFav ? "♥" : "♡"}</button>
         <span class="card-emoji">${recipe.emoji}</span>
       </div>
       <div class="card-body">
         <h3 class="card-title">${recipe.title}</h3>
-        <div class="card-tags">
-          <span class="card-tag">${recipe.categoryLabel}</span>
-          <span class="card-tag">${recipe.difficulty}</span>
-        </div>
         <div class="card-meta">
           <span>⏱ ${recipe.time}</span>
-          <span class="card-arrow">查看做法 →</span>
+          <span>📌 ${recipe.difficulty}</span>
         </div>
+        <div class="card-foot">查看做法 →</div>
       </div>
     `;
-    card.addEventListener("click", () => openModal(recipe));
-    card.addEventListener("keydown", e => {
-      if (e.key === "Enter" || e.key === " ") openModal(recipe);
-    });
-    grid.appendChild(card);
 
-    // anime.js hover: smooth spring-like lift
-    if (typeof anime !== "undefined") {
-      let hoverAnim;
+    // 打开详情
+    card.addEventListener("click", e => {
+      if (e.target.closest(".card-fav")) return;
+      openModal(recipe);
+    });
+    card.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(recipe); }
+    });
+
+    // 收藏切换
+    const favBtn = card.querySelector(".card-fav");
+    favBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      const id = recipe.id;
+      if (favState.has(id)) { favState.delete(id); favBtn.classList.remove("active"); favBtn.textContent = "♡"; }
+      else { favState.add(id); favBtn.classList.add("active"); favBtn.textContent = "♥"; }
+      if (typeof anime !== "undefined" && !prefersReduced) {
+        anime({ targets: favBtn, scale: [1, 1.35, 1], duration: 320, easing: "spring(1, 80, 12, 0)" });
+      }
+    });
+
+    // hover 弹性上浮
+    if (typeof anime !== "undefined" && !prefersReduced) {
+      let h;
       card.addEventListener("mouseenter", () => {
-        if (hoverAnim) hoverAnim.pause();
-        hoverAnim = anime({
-          targets: card,
-          translateY: -10,
-          scale: 1.03,
-          boxShadow: "0 20px 50px rgba(231, 111, 81, 0.18)",
-          duration: 400,
-          easing: "spring(1, 80, 12, 0)"
-        });
+        if (h) h.pause();
+        h = anime({ targets: card, translateY: -8, scale: 1.02, boxShadow: "0 18px 44px rgba(255,122,89,0.20)", duration: 400, easing: "spring(1, 80, 12, 0)" });
       });
       card.addEventListener("mouseleave", () => {
-        if (hoverAnim) hoverAnim.pause();
-        hoverAnim = anime({
-          targets: card,
-          translateY: 0,
-          scale: 1,
-          boxShadow: "0 4px 16px rgba(93, 64, 55, 0.08)",
-          duration: 500,
-          easing: "spring(1, 80, 12, 0)"
-        });
+        if (h) h.pause();
+        h = anime({ targets: card, translateY: 0, scale: 1, boxShadow: "0 4px 16px rgba(93,64,55,0.08)", duration: 500, easing: "spring(1, 80, 12, 0)" });
       });
     }
+
+    grid.appendChild(card);
   });
 
   animateCardsIn();
 }
 
+// ---- 卡片入场动画 ----
 function animateCardsIn() {
   const cards = grid.querySelectorAll(".recipe-card");
-  if (typeof anime === "undefined") return;
+  const emojis = grid.querySelectorAll(".card-emoji");
+  if (typeof anime === "undefined" || prefersReduced) return;
 
   anime.set(cards, { opacity: 0, translateY: 36, scale: 0.94, rotate: -1 });
-
   anime({
     targets: cards,
     opacity: [0, 1],
@@ -167,8 +224,6 @@ function animateCardsIn() {
     easing: "spring(1, 75, 14, 0)"
   });
 
-  // Animate emoji pop separately for extra life
-  const emojis = grid.querySelectorAll(".card-emoji");
   anime.set(emojis, { scale: 0, rotate: -30 });
   anime({
     targets: emojis,
@@ -180,22 +235,13 @@ function animateCardsIn() {
   });
 }
 
-filterBtns.forEach(btn => {
-  btn.addEventListener("click", () => {
-    if (typeof anime !== "undefined") {
-      anime({
-        targets: btn,
-        scale: [1, 0.92, 1],
-        duration: 400,
-        easing: "spring(1, 80, 12, 0)"
-      });
-    }
-    filterBtns.forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    renderRecipes(btn.dataset.category);
-  });
+// ---- 搜索（实时） ----
+searchInput.addEventListener("input", e => {
+  currentQuery = e.target.value;
+  renderRecipes();
 });
 
+// ---- 弹窗 ----
 let isAnimatingOut = false;
 
 function openModal(recipe) {
@@ -204,63 +250,37 @@ function openModal(recipe) {
   document.getElementById("modalTime").textContent = `⏱ ${recipe.time}`;
   document.getElementById("modalDifficulty").textContent = `📌 ${recipe.difficulty}`;
 
-  const ingList = document.getElementById("modalIngredients");
-  ingList.innerHTML = recipe.ingredients.map(i => `<li>${i}</li>`).join("");
-
-  const stepList = document.getElementById("modalSteps");
-  stepList.innerHTML = recipe.steps.map(s => `<li>${s}</li>`).join("");
+  document.getElementById("modalIngredients").innerHTML = recipe.ingredients.map(i => `<li>${i}</li>`).join("");
+  document.getElementById("modalSteps").innerHTML = recipe.steps.map(s => `<li>${s}</li>`).join("");
 
   const tipBox = document.getElementById("modalTip");
-  if (recipe.tip) {
-    tipBox.hidden = false;
-    tipBox.querySelector("p").textContent = recipe.tip;
-  } else {
-    tipBox.hidden = true;
-  }
+  if (recipe.tip) { tipBox.hidden = false; tipBox.querySelector("p").textContent = recipe.tip; }
+  else { tipBox.hidden = true; }
 
   modal.hidden = false;
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
 
-  if (typeof anime !== "undefined") {
-    const backdrop = modal.querySelector(".modal-backdrop");
-    const card = modal.querySelector(".modal-card");
-    const header = modal.querySelector(".modal-header");
-    const body = modal.querySelector(".modal-body");
-    const closeBtn = modal.querySelector(".modal-close");
+  if (typeof anime === "undefined" || prefersReduced) return;
 
-    anime.set(backdrop, { opacity: 0 });
-    anime.set(card, { opacity: 0, translateY: 40, scale: 0.88 });
-    anime.set([header, body, closeBtn], { opacity: 0, translateY: 14 });
+  const backdrop = modal.querySelector(".modal-backdrop");
+  const card = modal.querySelector(".modal-card");
+  const header = modal.querySelector(".modal-header");
+  const body = modal.querySelector(".modal-body");
+  const closeBtn = modal.querySelector(".modal-close");
 
-    const tl = anime.timeline();
-    tl.add({
-      targets: backdrop,
-      opacity: [0, 1],
-      duration: 250,
-      easing: "linear"
-    })
-    .add({
-      targets: card,
-      opacity: [0, 1],
-      translateY: [40, 0],
-      scale: [0.88, 1],
-      duration: 700,
-      easing: "spring(1, 70, 12, 0)"
-    }, "-=150")
-    .add({
-      targets: [header, body, closeBtn],
-      opacity: [0, 1],
-      translateY: [14, 0],
-      duration: 500,
-      delay: anime.stagger(80),
-      easing: "spring(1, 80, 14, 0)"
-    }, "-=400");
-  }
+  anime.set(backdrop, { opacity: 0 });
+  anime.set(card, { opacity: 0, translateY: 40, scale: 0.88 });
+  anime.set([header, body, closeBtn], { opacity: 0, translateY: 14 });
+
+  anime.timeline()
+    .add({ targets: backdrop, opacity: [0, 1], duration: 250, easing: "linear" })
+    .add({ targets: card, opacity: [0, 1], translateY: [40, 0], scale: [0.88, 1], duration: 700, easing: "spring(1, 70, 12, 0)" }, "-=150")
+    .add({ targets: [header, body, closeBtn], opacity: [0, 1], translateY: [14, 0], duration: 500, delay: anime.stagger(80), easing: "spring(1, 80, 14, 0)" }, "-=400");
 }
 
 function closeModal() {
-  if (typeof anime === "undefined") {
+  if (typeof anime === "undefined" || prefersReduced) {
     modal.hidden = true;
     modal.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
@@ -271,19 +291,9 @@ function closeModal() {
   const card = modal.querySelector(".modal-card");
   const backdrop = modal.querySelector(".modal-backdrop");
 
+  anime({ targets: card, opacity: [1, 0], translateY: [0, 30], scale: [1, 0.9], duration: 350, easing: "easeInQuart" });
   anime({
-    targets: card,
-    opacity: [1, 0],
-    translateY: [0, 30],
-    scale: [1, 0.9],
-    duration: 350,
-    easing: "easeInQuart"
-  });
-  anime({
-    targets: backdrop,
-    opacity: [1, 0],
-    duration: 350,
-    easing: "easeInQuart",
+    targets: backdrop, opacity: [1, 0], duration: 350, easing: "easeInQuart",
     complete: () => {
       modal.hidden = true;
       modal.setAttribute("aria-hidden", "true");
@@ -293,10 +303,22 @@ function closeModal() {
   });
 }
 
-document.querySelector(".modal-close").addEventListener("click", closeModal);
-document.querySelector(".modal-backdrop").addEventListener("click", closeModal);
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape" && !modal.hidden) closeModal();
-});
+modal.querySelector(".modal-close").addEventListener("click", closeModal);
+modal.querySelector(".modal-backdrop").addEventListener("click", closeModal);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
 
+// ---- 启动 ----
+buildCategories();
 renderRecipes();
+
+// Hero 入场
+if (typeof anime !== "undefined" && !prefersReduced) {
+  anime({
+    targets: ".hero-content > *",
+    opacity: [0, 1],
+    translateY: [20, 0],
+    delay: anime.stagger(120),
+    duration: 700,
+    easing: "easeOutCubic"
+  });
+}

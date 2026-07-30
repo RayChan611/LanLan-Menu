@@ -7,37 +7,52 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="hero">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1>栏栏菜谱</h1>
-      <p class="subtitle">LanLan's Cute Kitchen · 把爱做成一道道菜</p>
-      <div class="hero-tags">
-        <span>🍳 家常</span>
-        <span>🍰 甜品</span>
-        <span>🍲 汤羹</span>
-        <span>🥢 小食</span>
+  <!-- 顶部导航 -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" href="#top">
+        <span class="nav-logo-emoji">🍳</span>
+        <span class="nav-logo-text">栏栏菜谱</span>
+      </a>
+      <div class="nav-search">
+        <span class="nav-search-icon">🔍</span>
+        <input id="searchInput" type="search" placeholder="搜搜今天吃什么…" aria-label="搜索菜谱">
       </div>
+      <div class="nav-avatar" aria-hidden="true">🐾</div>
     </div>
   </header>
 
+  <!-- Hero 横幅 -->
+  <section class="hero" id="top">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">栏栏的私房菜谱</h1>
+      <p class="hero-subtitle">把爱，做成一道道菜 🧡</p>
+      <div class="hero-tags">
+        <span>🍳 家常</span>
+        <span>🍲 汤羹</span>
+        <span>🍰 甜品</span>
+        <span>🥢 小食</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 分类快速导航（由 JS 动态生成） -->
+  <nav class="cat-bar" id="catBar" aria-label="菜谱分类"></nav>
+
   <main class="container">
-    <section class="filters">
-      <button class="filter-btn active" data-category="all">全部</button>
-      <button class="filter-btn" data-category="breakfast">早餐</button>
-      <button class="filter-btn" data-category="home">家常菜</button>
-      <button class="filter-btn" data-category="soup">汤羹</button>
-      <button class="filter-btn" data-category="dessert">甜品</button>
-      <button class="filter-btn" data-category="snack">小食</button>
-    </section>
+    <div class="section-head">
+      <h2 class="section-title">全部菜谱</h2>
+      <span class="section-count" id="recipeCount"></span>
+    </div>
 
     <section class="recipes-grid" id="recipesGrid">
-      <!-- Recipes injected by JS -->
+      <!-- 卡片由 JS 注入 -->
     </section>
 
     <div class="empty-state" id="emptyState" hidden>
       <div class="empty-emoji">🍽️</div>
-      <p>这个分类还没有菜谱哦～</p>
+      <p>没有找到对应的菜谱哦～换个关键词试试？</p>
     </div>
   </main>
 
@@ -45,6 +60,7 @@
     <p>Made with 🧡 by LanLan · 记录每一次厨房的小幸福</p>
   </footer>
 
+  <!-- 菜谱详情弹窗 -->
   <div class="modal" id="recipeModal" aria-hidden="true">
     <div class="modal-backdrop"></div>
     <div class="modal-card">
