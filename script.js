@@ -98,7 +98,9 @@ function renderRecipes(category = "all") {
     card.setAttribute("role", "button");
     card.setAttribute("tabindex", "0");
     card.innerHTML = `
-      <div class="card-emoji">${recipe.emoji}</div>
+      <div class="card-emoji-wrap">
+        <span class="card-emoji">${recipe.emoji}</span>
+      </div>
       <div class="card-body">
         <h3 class="card-title">${recipe.title}</h3>
         <div class="card-tags">
@@ -107,7 +109,7 @@ function renderRecipes(category = "all") {
         </div>
         <div class="card-meta">
           <span>⏱ ${recipe.time}</span>
-          <span>查看做法 →</span>
+          <span class="card-arrow">查看做法 →</span>
         </div>
       </div>
     `;
@@ -116,6 +118,33 @@ function renderRecipes(category = "all") {
       if (e.key === "Enter" || e.key === " ") openModal(recipe);
     });
     grid.appendChild(card);
+
+    // anime.js hover: smooth spring-like lift
+    if (typeof anime !== "undefined") {
+      let hoverAnim;
+      card.addEventListener("mouseenter", () => {
+        if (hoverAnim) hoverAnim.pause();
+        hoverAnim = anime({
+          targets: card,
+          translateY: -10,
+          scale: 1.03,
+          boxShadow: "0 20px 50px rgba(231, 111, 81, 0.18)",
+          duration: 400,
+          easing: "spring(1, 80, 12, 0)"
+        });
+      });
+      card.addEventListener("mouseleave", () => {
+        if (hoverAnim) hoverAnim.pause();
+        hoverAnim = anime({
+          targets: card,
+          translateY: 0,
+          scale: 1,
+          boxShadow: "0 4px 16px rgba(93, 64, 55, 0.08)",
+          duration: 500,
+          easing: "spring(1, 80, 12, 0)"
+        });
+      });
+    }
   });
 
   animateCardsIn();
@@ -124,20 +153,43 @@ function renderRecipes(category = "all") {
 function animateCardsIn() {
   const cards = grid.querySelectorAll(".recipe-card");
   if (typeof anime === "undefined") return;
-  anime.set(cards, { opacity: 0, translateY: 28, scale: 0.96 });
+
+  anime.set(cards, { opacity: 0, translateY: 36, scale: 0.94, rotate: -1 });
+
   anime({
     targets: cards,
     opacity: [0, 1],
-    translateY: [28, 0],
-    scale: [0.96, 1],
-    delay: anime.stagger(70),
-    duration: 600,
-    easing: "cubicBezier(0.22, 1, 0.36, 1)"
+    translateY: [36, 0],
+    scale: [0.94, 1],
+    rotate: [-1, 0],
+    delay: anime.stagger(80, { from: "first" }),
+    duration: 800,
+    easing: "spring(1, 75, 14, 0)"
+  });
+
+  // Animate emoji pop separately for extra life
+  const emojis = grid.querySelectorAll(".card-emoji");
+  anime.set(emojis, { scale: 0, rotate: -30 });
+  anime({
+    targets: emojis,
+    scale: [0, 1.2, 1],
+    rotate: [-30, 10, 0],
+    delay: anime.stagger(80, { start: 200 }),
+    duration: 900,
+    easing: "spring(1, 70, 10, 0)"
   });
 }
 
 filterBtns.forEach(btn => {
   btn.addEventListener("click", () => {
+    if (typeof anime !== "undefined") {
+      anime({
+        targets: btn,
+        scale: [1, 0.92, 1],
+        duration: 400,
+        easing: "spring(1, 80, 12, 0)"
+      });
+    }
     filterBtns.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     renderRecipes(btn.dataset.category);
@@ -175,14 +227,35 @@ function openModal(recipe) {
     const card = modal.querySelector(".modal-card");
     const header = modal.querySelector(".modal-header");
     const body = modal.querySelector(".modal-body");
-    anime.set(backdrop, { opacity: 0 });
-    anime.set(card, { opacity: 0, translateY: 24, scale: 0.92 });
-    anime.set([header, body], { opacity: 0, translateY: 12 });
+    const closeBtn = modal.querySelector(".modal-close");
 
-    const tl = anime.timeline({ easing: "cubicBezier(0.22, 1, 0.36, 1)" });
-    tl.add({ targets: backdrop, opacity: [0, 1], duration: 300 })
-      .add({ targets: card, opacity: [0, 1], translateY: [24, 0], scale: [0.92, 1], duration: 500, elasticity: 600 }, "-=200")
-      .add({ targets: [header, body], opacity: [0, 1], translateY: [12, 0], duration: 450, delay: anime.stagger(90) }, "-=300");
+    anime.set(backdrop, { opacity: 0 });
+    anime.set(card, { opacity: 0, translateY: 40, scale: 0.88 });
+    anime.set([header, body, closeBtn], { opacity: 0, translateY: 14 });
+
+    const tl = anime.timeline();
+    tl.add({
+      targets: backdrop,
+      opacity: [0, 1],
+      duration: 250,
+      easing: "linear"
+    })
+    .add({
+      targets: card,
+      opacity: [0, 1],
+      translateY: [40, 0],
+      scale: [0.88, 1],
+      duration: 700,
+      easing: "spring(1, 70, 12, 0)"
+    }, "-=150")
+    .add({
+      targets: [header, body, closeBtn],
+      opacity: [0, 1],
+      translateY: [14, 0],
+      duration: 500,
+      delay: anime.stagger(80),
+      easing: "spring(1, 80, 14, 0)"
+    }, "-=400");
   }
 }
 
@@ -201,16 +274,16 @@ function closeModal() {
   anime({
     targets: card,
     opacity: [1, 0],
-    translateY: [0, 16],
-    scale: [1, 0.95],
-    duration: 280,
-    easing: "cubicBezier(0.4, 0, 1, 1)"
+    translateY: [0, 30],
+    scale: [1, 0.9],
+    duration: 350,
+    easing: "easeInQuart"
   });
   anime({
     targets: backdrop,
     opacity: [1, 0],
-    duration: 280,
-    easing: "linear",
+    duration: 350,
+    easing: "easeInQuart",
     complete: () => {
       modal.hidden = true;
       modal.setAttribute("aria-hidden", "true");
