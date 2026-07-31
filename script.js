@@ -7,6 +7,7 @@ const recipes = [
     categoryLabel: "家常菜",
     time: "15 分钟",
     difficulty: "简单",
+    desc: "酸甜下饭，三碗米饭起步的家常经典",
     ingredients: ["番茄 2个", "鸡蛋 3个", "葱花 少许", "盐 1小勺", "糖 1小勺", "食用油 适量"],
     steps: [
       "番茄洗净切块，鸡蛋加少许盐打散。",
@@ -25,6 +26,7 @@ const recipes = [
     categoryLabel: "家常菜",
     time: "1.5 小时",
     difficulty: "中等",
+    desc: "番茄熬出沙，牛肋条软糯，腐竹吸饱汤汁",
     ingredients: ["牛肋条 500g", "番茄 3个", "腐竹 1把", "姜片 3片", "葱段 少许", "生抽 2勺", "番茄酱 1勺", "冰糖 几粒", "盐 适量"],
     steps: [
       "牛肋条切块冷水下锅焯水，捞出洗净。",
@@ -43,6 +45,7 @@ const recipes = [
     categoryLabel: "家常菜",
     time: "1.5 小时",
     difficulty: "中等",
+    desc: "咖喱浓香裹着软烂牛肉，连土豆都入味",
     ingredients: ["牛肋条 500g", "土豆 2个", "胡萝卜 1根", "洋葱 半个", "咖喱块 1盒", "姜片 3片", "生抽 1勺", "盐 适量"],
     steps: [
       "牛肋条切块冷水下锅焯水，捞出洗净。",
@@ -61,6 +64,7 @@ const recipes = [
     categoryLabel: "汤羹",
     time: "2 小时",
     difficulty: "简单",
+    desc: "白胡椒提鲜，汤清肉烂，一口暖到胃里",
     ingredients: ["牛肋条 500g", "白萝卜 1根", "白胡椒粒 1小勺", "姜片 3片", "葱结 1个", "料酒 1勺", "盐 适量"],
     steps: [
       "牛肋条冷水下锅，加料酒焯水后捞出冲净。",
@@ -72,7 +76,6 @@ const recipes = [
   }
 ];
 
-// 分类样式映射（照片区渐变底）
 const categoryClass = {
   home: "cat-home",
   soup: "cat-soup",
@@ -91,17 +94,23 @@ const modal = document.getElementById("recipeModal");
 let currentCategory = "all";
 let currentQuery = "";
 const favState = new Set();
-
 const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// ---- 动态生成分类导航 ----
+// 难度 → 圆点数
+function diffDots(level) {
+  const n = level === "难" ? 3 : level === "中等" ? 2 : 1;
+  let dots = "";
+  for (let i = 0; i < 3; i++) dots += `<span class="dot ${i < n ? "on" : "off"}"></span>`;
+  return `<span class="card-diff"><span class="dots">${dots}</span><span class="diff-label">${level}</span></span>`;
+}
+
+// 动态分类
 function buildCategories() {
   const present = [...new Set(recipes.map(r => r.category))];
   const cats = [{ key: "all", label: "全部" }, ...present.map(c => {
     const sample = recipes.find(r => r.category === c);
     return { key: c, label: sample.categoryLabel };
   })];
-
   catBar.innerHTML = "";
   cats.forEach((c, i) => {
     const btn = document.createElement("button");
@@ -121,7 +130,6 @@ function buildCategories() {
   });
 }
 
-// ---- 过滤逻辑 ----
 function getFiltered() {
   const q = currentQuery.trim().toLowerCase();
   return recipes.filter(r => {
@@ -152,21 +160,22 @@ function renderRecipes() {
 
     const isFav = favState.has(recipe.id);
     card.innerHTML = `
-      <div class="card-photo ${categoryClass[recipe.category] || "cat-home"}">
+      <div class="card-cover ${categoryClass[recipe.category] || "cat-home"}">
+        <span class="cover-pill card-time">⏱ ${recipe.time}</span>
         <button class="card-fav ${isFav ? "active" : ""}" aria-label="收藏" data-fav="${recipe.id}">${isFav ? "♥" : "♡"}</button>
         <span class="card-emoji">${recipe.emoji}</span>
+        <span class="cover-pill card-cat">${recipe.categoryLabel}</span>
       </div>
       <div class="card-body">
         <h3 class="card-title">${recipe.title}</h3>
-        <div class="card-meta">
-          <span>⏱ ${recipe.time}</span>
-          <span>📌 ${recipe.difficulty}</span>
+        <p class="card-desc">${recipe.desc || ""}</p>
+        <div class="card-foot">
+          ${diffDots(recipe.difficulty)}
+          <span class="card-cta">查看做法 →</span>
         </div>
-        <div class="card-foot">查看做法 →</div>
       </div>
     `;
 
-    // 打开详情
     card.addEventListener("click", e => {
       if (e.target.closest(".card-fav")) return;
       openModal(recipe);
@@ -175,7 +184,6 @@ function renderRecipes() {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(recipe); }
     });
 
-    // 收藏切换
     const favBtn = card.querySelector(".card-fav");
     favBtn.addEventListener("click", e => {
       e.stopPropagation();
@@ -187,12 +195,11 @@ function renderRecipes() {
       }
     });
 
-    // hover 弹性上浮
     if (typeof anime !== "undefined" && !prefersReduced) {
       let h;
       card.addEventListener("mouseenter", () => {
         if (h) h.pause();
-        h = anime({ targets: card, translateY: -8, scale: 1.02, boxShadow: "0 18px 44px rgba(255,122,89,0.20)", duration: 400, easing: "spring(1, 80, 12, 0)" });
+        h = anime({ targets: card, translateY: -10, scale: 1.02, boxShadow: "0 18px 44px rgba(255,122,89,0.20)", duration: 400, easing: "spring(1, 80, 12, 0)" });
       });
       card.addEventListener("mouseleave", () => {
         if (h) h.pause();
@@ -206,7 +213,6 @@ function renderRecipes() {
   animateCardsIn();
 }
 
-// ---- 卡片入场动画 ----
 function animateCardsIn() {
   const cards = grid.querySelectorAll(".recipe-card");
   const emojis = grid.querySelectorAll(".card-emoji");
@@ -215,35 +221,24 @@ function animateCardsIn() {
   anime.set(cards, { opacity: 0, translateY: 36, scale: 0.94, rotate: -1 });
   anime({
     targets: cards,
-    opacity: [0, 1],
-    translateY: [36, 0],
-    scale: [0.94, 1],
-    rotate: [-1, 0],
-    delay: anime.stagger(80, { from: "first" }),
-    duration: 800,
-    easing: "spring(1, 75, 14, 0)"
+    opacity: [0, 1], translateY: [36, 0], scale: [0.94, 1], rotate: [-1, 0],
+    delay: anime.stagger(80, { from: "first" }), duration: 800, easing: "spring(1, 75, 14, 0)"
   });
 
   anime.set(emojis, { scale: 0, rotate: -30 });
   anime({
     targets: emojis,
-    scale: [0, 1.2, 1],
-    rotate: [-30, 10, 0],
-    delay: anime.stagger(80, { start: 200 }),
-    duration: 900,
-    easing: "spring(1, 70, 10, 0)"
+    scale: [0, 1.2, 1], rotate: [-30, 10, 0],
+    delay: anime.stagger(80, { start: 200 }), duration: 900, easing: "spring(1, 70, 10, 0)"
   });
 }
 
-// ---- 搜索（实时） ----
 searchInput.addEventListener("input", e => {
   currentQuery = e.target.value;
   renderRecipes();
 });
 
-// ---- 弹窗 ----
 let isAnimatingOut = false;
-
 function openModal(recipe) {
   document.getElementById("modalCategory").textContent = recipe.categoryLabel;
   document.getElementById("modalTitle").textContent = recipe.title;
@@ -281,25 +276,17 @@ function openModal(recipe) {
 
 function closeModal() {
   if (typeof anime === "undefined" || prefersReduced) {
-    modal.hidden = true;
-    modal.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
+    modal.hidden = true; modal.setAttribute("aria-hidden", "true"); document.body.style.overflow = "";
     return;
   }
   if (isAnimatingOut) return;
   isAnimatingOut = true;
   const card = modal.querySelector(".modal-card");
   const backdrop = modal.querySelector(".modal-backdrop");
-
   anime({ targets: card, opacity: [1, 0], translateY: [0, 30], scale: [1, 0.9], duration: 350, easing: "easeInQuart" });
   anime({
     targets: backdrop, opacity: [1, 0], duration: 350, easing: "easeInQuart",
-    complete: () => {
-      modal.hidden = true;
-      modal.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-      isAnimatingOut = false;
-    }
+    complete: () => { modal.hidden = true; modal.setAttribute("aria-hidden", "true"); document.body.style.overflow = ""; isAnimatingOut = false; }
   });
 }
 
@@ -307,18 +294,13 @@ modal.querySelector(".modal-close").addEventListener("click", closeModal);
 modal.querySelector(".modal-backdrop").addEventListener("click", closeModal);
 document.addEventListener("keydown", e => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
 
-// ---- 启动 ----
 buildCategories();
 renderRecipes();
 
-// Hero 入场
 if (typeof anime !== "undefined" && !prefersReduced) {
   anime({
     targets: ".hero-content > *",
-    opacity: [0, 1],
-    translateY: [20, 0],
-    delay: anime.stagger(120),
-    duration: 700,
-    easing: "easeOutCubic"
+    opacity: [0, 1], translateY: [20, 0],
+    delay: anime.stagger(120), duration: 700, easing: "easeOutCubic"
   });
 }
