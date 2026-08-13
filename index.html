@@ -2,95 +2,172 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'none'">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>栏栏菜谱 LanLan Menu</title>
+  <meta name="description" content="栏栏的私人菜谱手账，收藏认真做过、还想再吃的每一道菜。">
+  <meta name="theme-color" content="#f5efe6">
+  <meta name="referrer" content="no-referrer">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:title" content="栏栏菜谱 · LanLan Menu">
+  <meta property="og:description" content="认真吃饭，是很小也很重要的事。这里记下做过、喜欢，还想再吃的味道。">
+  <meta property="og:image" content="https://raychan611.github.io/LanLan-Menu/assets/hero.jpg">
+  <meta property="og:url" content="https://raychan611.github.io/LanLan-Menu/">
+  <title>栏栏菜谱 · LanLan Menu</title>
+  <link rel="canonical" href="https://raychan611.github.io/LanLan-Menu/">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <!-- 顶部导航 -->
-  <header class="nav">
-    <div class="nav-inner">
-      <a class="nav-logo" href="#top">
-        <span class="nav-logo-emoji">🍳</span>
-        <span class="nav-logo-text">栏栏菜谱</span>
+<body id="top">
+  <a class="skip-link" href="#recipes">跳到菜谱列表</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#top" aria-label="栏栏菜谱首页">
+        <span class="brand-seal" aria-hidden="true">栏</span>
+        <span class="brand-copy">
+          <strong>栏栏菜谱</strong>
+          <small>LanLan's kitchen notes</small>
+        </span>
       </a>
-      <div class="nav-search">
-        <span class="nav-search-icon">🔍</span>
-        <input id="searchInput" type="search" placeholder="搜搜今天吃什么…" aria-label="搜索菜谱">
-      </div>
-      <div class="nav-avatar" aria-hidden="true">🐾</div>
+
+      <nav class="header-nav" aria-label="主导航">
+        <a href="#recipes">今日菜单</a>
+        <a href="#about">关于小厨房</a>
+      </nav>
     </div>
   </header>
 
-  <!-- Hero 横幅 -->
-  <section class="hero" id="top">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1 class="hero-title">栏栏的私房菜谱</h1>
-      <p class="hero-subtitle">把爱，做成一道道菜 🧡</p>
-      <div class="hero-tags">
-        <span>🍳 家常</span>
-        <span>🍲 汤羹</span>
-        <span>🍰 甜品</span>
-        <span>🥢 小食</span>
+  <main>
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero-shade"></div>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">LANLAN’S KITCHEN · 私房手记</p>
+          <h1 id="heroTitle">栏栏的<br>私房菜谱</h1>
+          <p class="hero-intro">认真吃饭，是很小也很重要的事。<br>这里记下做过、喜欢，还想再吃的味道。</p>
+          <a class="hero-link" href="#recipes">
+            翻翻今天的菜单
+            <span aria-hidden="true">↓</span>
+          </a>
+        </div>
+
+        <aside class="hero-note" aria-label="菜谱手账信息">
+          <span class="note-label">KITCHEN NOTE</span>
+          <strong>家的味道<br>不用太复杂</strong>
+          <span class="note-rule"></span>
+          <p><span id="heroRecipeCount">04</span> 道私房菜 · 慢慢更新</p>
+        </aside>
       </div>
-    </div>
-  </section>
-
-  <!-- 分类快速导航（由 JS 动态生成） -->
-  <nav class="cat-bar" id="catBar" aria-label="菜谱分类"></nav>
-
-  <main class="container">
-    <div class="section-head">
-      <h2 class="section-title">🍽️ 全部菜谱</h2>
-      <span class="section-count" id="recipeCount"></span>
-    </div>
-
-    <section class="recipes-grid" id="recipesGrid">
-      <!-- 卡片由 JS 注入 -->
     </section>
 
-    <div class="empty-state" id="emptyState" hidden>
-      <div class="empty-emoji">🍽️</div>
-      <p>没有找到对应的菜谱哦～换个关键词试试？</p>
-    </div>
+    <section class="menu-section" id="recipes" aria-labelledby="recipesTitle">
+      <div class="menu-heading">
+        <div>
+          <p class="eyebrow eyebrow-dark">RECIPES · 菜谱手账</p>
+          <h2 id="recipesTitle">今天想吃点什么？</h2>
+          <p class="menu-lead">按分类翻一翻，或者直接搜食材和菜名。</p>
+        </div>
+
+        <div class="search-box">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
+            <circle cx="11" cy="11" r="6.5"></circle>
+            <path d="m16 16 4 4"></path>
+          </svg>
+          <label class="sr-only" for="searchInput">搜索菜谱</label>
+          <input id="searchInput" type="search" placeholder="搜索菜名、食材…" autocomplete="off">
+          <button class="search-clear" id="searchClear" type="button" aria-label="清空搜索" hidden>清除</button>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <div class="category-list" id="catBar" role="group" aria-label="菜谱分类"></div>
+        <p class="result-count" id="recipeCount" aria-live="polite"></p>
+      </div>
+
+      <section class="recipes-grid" id="recipesGrid" aria-label="菜谱列表"></section>
+
+      <noscript>
+        <p class="noscript-message">请启用 JavaScript 以使用菜谱搜索、筛选和详情功能。</p>
+      </noscript>
+
+      <div class="empty-state" id="emptyState" hidden>
+        <span class="empty-mark" aria-hidden="true">?</span>
+        <h3>这一页还没写下答案</h3>
+        <p>换个菜名或食材试试，也可以回到全部菜谱。</p>
+        <button id="resetFilter" type="button">查看全部菜谱</button>
+      </div>
+    </section>
+
+    <section class="about" id="about" aria-labelledby="aboutTitle">
+      <div class="about-number" aria-hidden="true">食</div>
+      <div class="about-copy">
+        <p class="eyebrow eyebrow-dark">ABOUT · 关于这里</p>
+        <h2 id="aboutTitle">一道菜，一段日常。</h2>
+      </div>
+      <p>不追求复杂的技法，只记录家里真正会反复做的味道。愿每一次打开这本菜谱，都能更快决定今天吃什么。</p>
+    </section>
   </main>
 
-  <footer class="footer">
-    <p>Made with 🧡 by LanLan · 记录每一次厨房的小幸福</p>
+  <footer class="site-footer">
+    <p>LanLan Menu</p>
+    <p>好好吃饭，也好好生活。</p>
   </footer>
 
-  <!-- 菜谱详情弹窗 -->
-  <div class="modal" id="recipeModal" aria-hidden="true">
-    <div class="modal-backdrop"></div>
-    <div class="modal-card">
-      <button class="modal-close" aria-label="关闭">&times;</button>
-      <div class="modal-header">
-        <span class="modal-category" id="modalCategory"></span>
-        <h2 id="modalTitle"></h2>
-        <div class="modal-meta">
-          <span id="modalTime"></span>
-          <span id="modalDifficulty"></span>
+  <div class="drawer" id="recipeModal" hidden aria-hidden="true">
+    <div class="drawer-backdrop" data-close-modal></div>
+    <section class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDescription">
+      <button class="drawer-close" type="button" aria-label="关闭菜谱详情" data-close-modal>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+
+      <header class="drawer-header" id="modalHeader">
+        <div class="drawer-index" id="modalIndex" aria-hidden="true"></div>
+        <div class="drawer-heading">
+          <span class="drawer-category" id="modalCategory"></span>
+          <h2 id="modalTitle">菜谱详情</h2>
+          <p id="modalDescription"></p>
+          <dl class="drawer-meta">
+            <div>
+              <dt>用时</dt>
+              <dd id="modalTime"></dd>
+            </div>
+            <div>
+              <dt>难度</dt>
+              <dd id="modalDifficulty"></dd>
+            </div>
+          </dl>
         </div>
-      </div>
-      <div class="modal-body">
-        <div class="ingredients">
-          <h3>🥬 食材</h3>
+      </header>
+
+      <div class="drawer-body">
+        <section class="ingredients" aria-labelledby="ingredientsTitle">
+          <div class="drawer-section-title">
+            <span>01</span>
+            <h3 id="ingredientsTitle">准备食材</h3>
+          </div>
           <ul id="modalIngredients"></ul>
-        </div>
-        <div class="steps">
-          <h3>👩‍🍳 做法</h3>
+        </section>
+
+        <section class="steps" aria-labelledby="stepsTitle">
+          <div class="drawer-section-title">
+            <span>02</span>
+            <h3 id="stepsTitle">开始制作</h3>
+          </div>
           <ol id="modalSteps"></ol>
-        </div>
-        <div class="tip" id="modalTip" hidden>
-          <h3>💡 小贴士</h3>
+        </section>
+
+        <aside class="tip" id="modalTip" aria-labelledby="tipTitle" hidden>
+          <span class="tip-label" id="tipTitle">栏栏的小贴士</span>
           <p></p>
-        </div>
+        </aside>
       </div>
-    </div>
+    </section>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
   <script src="script.js"></script>
 </body>
 </html>

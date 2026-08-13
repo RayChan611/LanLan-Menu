@@ -2,7 +2,6 @@ const recipes = [
   {
     id: 1,
     title: "番茄炒蛋",
-    emoji: "🍅",
     category: "home",
     categoryLabel: "家常菜",
     time: "15 分钟",
@@ -21,7 +20,6 @@ const recipes = [
   {
     id: 2,
     title: "炖番茄牛肋条（腐竹配菜）",
-    emoji: "🍅",
     category: "home",
     categoryLabel: "家常菜",
     time: "1.5 小时",
@@ -40,7 +38,6 @@ const recipes = [
   {
     id: 3,
     title: "咖喱土豆牛肋条",
-    emoji: "🍛",
     category: "home",
     categoryLabel: "家常菜",
     time: "1.5 小时",
@@ -59,7 +56,6 @@ const recipes = [
   {
     id: 4,
     title: "清炖牛肋条（白胡椒白萝卜）",
-    emoji: "🍲",
     category: "soup",
     categoryLabel: "汤羹",
     time: "2 小时",
@@ -76,231 +72,350 @@ const recipes = [
   }
 ];
 
-const categoryClass = {
-  home: "cat-home",
-  soup: "cat-soup",
-  breakfast: "cat-breakfast",
-  dessert: "cat-dessert",
-  snack: "cat-snack"
-};
+const STORAGE_KEY = "lanlan-menu-favorites-v1";
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const grid = document.getElementById("recipesGrid");
 const emptyState = document.getElementById("emptyState");
 const catBar = document.getElementById("catBar");
 const searchInput = document.getElementById("searchInput");
+const searchClear = document.getElementById("searchClear");
 const countEl = document.getElementById("recipeCount");
+const resetFilter = document.getElementById("resetFilter");
 const modal = document.getElementById("recipeModal");
+const drawerPanel = modal.querySelector(".drawer-panel");
+const toast = document.getElementById("toast");
+const pageContent = document.querySelectorAll(".skip-link, .site-header, main, .site-footer");
 
 let currentCategory = "all";
 let currentQuery = "";
-const favState = new Set();
-const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let lastFocusedElement = null;
+let toastTimer = null;
+let closeTimer = null;
+const favoriteIds = loadFavorites();
 
-// 难度 → 圆点数
-function diffDots(level) {
-  const n = level === "难" ? 3 : level === "中等" ? 2 : 1;
-  let dots = "";
-  for (let i = 0; i < 3; i++) dots += `<span class="dot ${i < n ? "on" : "off"}"></span>`;
-  return `<span class="card-diff"><span class="dots">${dots}</span><span class="diff-label">${level}</span></span>`;
+function loadFavorites() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    return new Set(stored.filter(id => recipes.some(recipe => recipe.id === id)));
+  } catch {
+    return new Set();
+  }
 }
 
-// 动态分类
+function saveFavorites() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...favoriteIds]));
+  } catch {
+    // 某些隐私浏览环境会禁用本地存储；收藏仍可在当前页面使用。
+  }
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function formatIndex(index) {
+  return String(index + 1).padStart(2, "0");
+}
+
+function heartIcon() {
+  return `
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path d="M20.8 4.7a5.4 5.4 0 0 0-7.6 0L12 5.9l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6l1.2 1.2L12 21l7.6-7.5 1.2-1.2a5.4 5.4 0 0 0 0-7.6Z"></path>
+    </svg>`;
+}
+
+function categoryOptions() {
+  const categoryMap = new Map();
+  recipes.forEach(recipe => {
+    if (!categoryMap.has(recipe.category)) {
+      categoryMap.set(recipe.category, recipe.categoryLabel);
+    }
+  });
+
+  return [
+    { key: "all", label: "全部", count: recipes.length },
+    ...[...categoryMap].map(([key, label]) => ({
+      key,
+      label,
+      count: recipes.filter(recipe => recipe.category === key).length
+    })),
+    { key: "favorites", label: "已收藏", count: favoriteIds.size }
+  ];
+}
+
 function buildCategories() {
-  const present = [...new Set(recipes.map(r => r.category))];
-  const cats = [{ key: "all", label: "全部" }, ...present.map(c => {
-    const sample = recipes.find(r => r.category === c);
-    return { key: c, label: sample.categoryLabel };
-  })];
-  catBar.innerHTML = "";
-  cats.forEach((c, i) => {
-    const btn = document.createElement("button");
-    btn.className = "cat-btn" + (i === 0 ? " active" : "");
-    btn.textContent = c.label;
-    btn.dataset.category = c.key;
-    btn.addEventListener("click", () => {
-      currentCategory = c.key;
-      catBar.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      if (typeof anime !== "undefined" && !prefersReduced) {
-        anime({ targets: btn, scale: [1, 0.92, 1], duration: 400, easing: "spring(1, 80, 12, 0)" });
-      }
+  catBar.innerHTML = categoryOptions().map(category => `
+    <button
+      class="cat-btn${currentCategory === category.key ? " active" : ""}"
+      type="button"
+      data-category="${category.key}"
+      aria-pressed="${currentCategory === category.key}"
+    >
+      ${category.label}<span class="cat-count">${category.count}</span>
+    </button>
+  `).join("");
+
+  catBar.querySelectorAll(".cat-btn").forEach(button => {
+    button.addEventListener("click", () => {
+      currentCategory = button.dataset.category;
+      updateCategories();
       renderRecipes();
     });
-    catBar.appendChild(btn);
   });
 }
 
-function getFiltered() {
-  const q = currentQuery.trim().toLowerCase();
-  return recipes.filter(r => {
-    const okCat = currentCategory === "all" || r.category === currentCategory;
-    const okQ = !q || r.title.toLowerCase().includes(q);
-    return okCat && okQ;
+function updateCategories() {
+  const options = new Map(categoryOptions().map(category => [category.key, category]));
+
+  catBar.querySelectorAll(".cat-btn").forEach(button => {
+    const category = options.get(button.dataset.category);
+    const isActive = currentCategory === button.dataset.category;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+    button.querySelector(".cat-count").textContent = category?.count ?? "0";
   });
+}
+
+function getFilteredRecipes() {
+  const query = currentQuery.trim().toLocaleLowerCase("zh-CN");
+
+  return recipes.filter(recipe => {
+    const matchesCategory = currentCategory === "all"
+      || (currentCategory === "favorites" && favoriteIds.has(recipe.id))
+      || recipe.category === currentCategory;
+
+    const searchableText = [
+      recipe.title,
+      recipe.categoryLabel,
+      recipe.desc,
+      ...recipe.ingredients
+    ].join(" ").toLocaleLowerCase("zh-CN");
+
+    return matchesCategory && (!query || searchableText.includes(query));
+  });
+}
+
+function cardTemplate(recipe) {
+  const originalIndex = recipes.findIndex(item => item.id === recipe.id);
+  const isFavorite = favoriteIds.has(recipe.id);
+  const safeTitle = escapeHtml(recipe.title);
+
+  return `
+    <article class="recipe-card card-enter" data-category="${recipe.category}" data-recipe-id="${recipe.id}">
+      <div class="card-content">
+        <span class="card-topline">
+          <span class="card-category">${escapeHtml(recipe.categoryLabel)} · RECIPE</span>
+        </span>
+        <span class="card-index" aria-hidden="true">${formatIndex(originalIndex)}</span>
+        <h3 class="card-title" id="recipe-title-${recipe.id}">${safeTitle}</h3>
+        <p class="card-desc">${escapeHtml(recipe.desc)}</p>
+        <span class="card-bottom">
+          <span class="card-meta">
+            <span>${escapeHtml(recipe.time)}</span>
+            <span>${escapeHtml(recipe.difficulty)}</span>
+          </span>
+          <span class="card-arrow">查看做法</span>
+        </span>
+      </div>
+      <button class="card-open" type="button" aria-label="查看${safeTitle}的做法">
+        <span class="sr-only">查看做法</span>
+      </button>
+      <button
+        class="card-fav${isFavorite ? " active" : ""}"
+        type="button"
+        aria-label="${isFavorite ? "取消收藏" : "收藏"}${safeTitle}"
+        aria-pressed="${isFavorite}"
+      >
+        ${heartIcon()}
+      </button>
+    </article>
+  `;
 }
 
 function renderRecipes() {
-  const list = getFiltered();
-  grid.innerHTML = "";
-  countEl.textContent = `共 ${list.length} 道`;
+  const filteredRecipes = getFilteredRecipes();
+  grid.innerHTML = filteredRecipes.map(cardTemplate).join("");
+  grid.hidden = filteredRecipes.length === 0;
+  emptyState.hidden = filteredRecipes.length !== 0;
 
-  if (list.length === 0) {
-    grid.hidden = true;
-    emptyState.hidden = false;
-    return;
-  }
-  grid.hidden = false;
-  emptyState.hidden = true;
+  const categoryName = categoryOptions().find(item => item.key === currentCategory)?.label || "全部";
+  countEl.textContent = currentQuery
+    ? `“${currentQuery.trim()}” · 找到 ${filteredRecipes.length} 道`
+    : `${categoryName} · ${filteredRecipes.length} 道`;
 
-  list.forEach(recipe => {
-    const card = document.createElement("article");
-    card.className = "recipe-card";
-    card.setAttribute("role", "button");
-    card.setAttribute("tabindex", "0");
+  grid.querySelectorAll(".recipe-card").forEach(card => {
+    const recipe = recipes.find(item => item.id === Number(card.dataset.recipeId));
+    card.querySelector(".card-open").addEventListener("click", event => openModal(recipe, event.currentTarget));
+    card.querySelector(".card-fav").addEventListener("click", event => toggleFavorite(recipe, event.currentTarget));
 
-    const isFav = favState.has(recipe.id);
-    card.innerHTML = `
-      <div class="card-cover ${categoryClass[recipe.category] || "cat-home"}">
-        <span class="cover-pill card-time">⏱ ${recipe.time}</span>
-        <button class="card-fav ${isFav ? "active" : ""}" aria-label="收藏" data-fav="${recipe.id}">${isFav ? "♥" : "♡"}</button>
-        <span class="card-emoji">${recipe.emoji}</span>
-        <span class="cover-pill card-cat">${recipe.categoryLabel}</span>
-      </div>
-      <div class="card-body">
-        <h3 class="card-title">${recipe.title}</h3>
-        <p class="card-desc">${recipe.desc || ""}</p>
-        <div class="card-foot">
-          ${diffDots(recipe.difficulty)}
-          <span class="card-cta">查看做法 →</span>
-        </div>
-      </div>
-    `;
-
-    card.addEventListener("click", e => {
-      if (e.target.closest(".card-fav")) return;
-      openModal(recipe);
-    });
-    card.addEventListener("keydown", e => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(recipe); }
-    });
-
-    const favBtn = card.querySelector(".card-fav");
-    favBtn.addEventListener("click", e => {
-      e.stopPropagation();
-      const id = recipe.id;
-      if (favState.has(id)) { favState.delete(id); favBtn.classList.remove("active"); favBtn.textContent = "♡"; }
-      else { favState.add(id); favBtn.classList.add("active"); favBtn.textContent = "♥"; }
-      if (typeof anime !== "undefined" && !prefersReduced) {
-        anime({ targets: favBtn, scale: [1, 1.35, 1], duration: 320, easing: "spring(1, 80, 12, 0)" });
-      }
-    });
-
-    if (typeof anime !== "undefined" && !prefersReduced) {
-      let h;
-      card.addEventListener("mouseenter", () => {
-        if (h) h.pause();
-        h = anime({ targets: card, translateY: -10, scale: 1.02, boxShadow: "0 18px 44px rgba(255,122,89,0.20)", duration: 400, easing: "spring(1, 80, 12, 0)" });
+    if (!reducedMotion) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => card.classList.add("card-enter-active"));
       });
-      card.addEventListener("mouseleave", () => {
-        if (h) h.pause();
-        h = anime({ targets: card, translateY: 0, scale: 1, boxShadow: "0 4px 16px rgba(93,64,55,0.08)", duration: 500, easing: "spring(1, 80, 12, 0)" });
-      });
+      window.setTimeout(() => {
+        card.classList.remove("card-enter", "card-enter-active");
+      }, 900);
     }
-
-    grid.appendChild(card);
-  });
-
-  animateCardsIn();
-}
-
-function animateCardsIn() {
-  const cards = grid.querySelectorAll(".recipe-card");
-  const emojis = grid.querySelectorAll(".card-emoji");
-  if (typeof anime === "undefined" || prefersReduced) return;
-
-  anime.set(cards, { opacity: 0, translateY: 36, scale: 0.94, rotate: -1 });
-  anime({
-    targets: cards,
-    opacity: [0, 1], translateY: [36, 0], scale: [0.94, 1], rotate: [-1, 0],
-    delay: anime.stagger(80, { from: "first" }), duration: 800, easing: "spring(1, 75, 14, 0)"
-  });
-
-  anime.set(emojis, { scale: 0, rotate: -30 });
-  anime({
-    targets: emojis,
-    scale: [0, 1.2, 1], rotate: [-30, 10, 0],
-    delay: anime.stagger(80, { start: 200 }), duration: 900, easing: "spring(1, 70, 10, 0)"
   });
 }
 
-searchInput.addEventListener("input", e => {
-  currentQuery = e.target.value;
-  renderRecipes();
-});
+function toggleFavorite(recipe, button) {
+  const willFavorite = !favoriteIds.has(recipe.id);
 
-let isAnimatingOut = false;
-function openModal(recipe) {
-  document.getElementById("modalCategory").textContent = recipe.categoryLabel;
+  if (willFavorite) {
+    favoriteIds.add(recipe.id);
+  } else {
+    favoriteIds.delete(recipe.id);
+  }
+
+  saveFavorites();
+  updateCategories();
+
+  if (currentCategory === "favorites") {
+    renderRecipes();
+    requestAnimationFrame(() => {
+      const nextTarget = grid.querySelector(".card-open") || catBar.querySelector(".cat-btn.active");
+      nextTarget?.focus({ preventScroll: true });
+    });
+  } else {
+    button.classList.toggle("active", willFavorite);
+    button.setAttribute("aria-pressed", String(willFavorite));
+    button.setAttribute("aria-label", `${willFavorite ? "取消收藏" : "收藏"}${recipe.title}`);
+  }
+
+  showToast(willFavorite ? `已收藏「${recipe.title}」` : `已取消收藏「${recipe.title}」`);
+}
+
+function showToast(message) {
+  window.clearTimeout(toastTimer);
+  toast.textContent = message;
+  toast.classList.add("show");
+  toastTimer = window.setTimeout(() => toast.classList.remove("show"), 1800);
+}
+
+function openModal(recipe, trigger) {
+  window.clearTimeout(closeTimer);
+  lastFocusedElement = trigger || document.activeElement;
+
+  const recipeIndex = recipes.findIndex(item => item.id === recipe.id);
+  const modalHeader = document.getElementById("modalHeader");
+  modalHeader.dataset.category = recipe.category;
+  document.getElementById("modalIndex").textContent = formatIndex(recipeIndex);
+  document.getElementById("modalCategory").textContent = `${recipe.categoryLabel} · RECIPE`;
   document.getElementById("modalTitle").textContent = recipe.title;
-  document.getElementById("modalTime").textContent = `⏱ ${recipe.time}`;
-  document.getElementById("modalDifficulty").textContent = `📌 ${recipe.difficulty}`;
-
-  document.getElementById("modalIngredients").innerHTML = recipe.ingredients.map(i => `<li>${i}</li>`).join("");
-  document.getElementById("modalSteps").innerHTML = recipe.steps.map(s => `<li>${s}</li>`).join("");
+  document.getElementById("modalDescription").textContent = recipe.desc;
+  document.getElementById("modalTime").textContent = recipe.time;
+  document.getElementById("modalDifficulty").textContent = recipe.difficulty;
+  document.getElementById("modalIngredients").innerHTML = recipe.ingredients
+    .map(ingredient => `<li>${escapeHtml(ingredient)}</li>`)
+    .join("");
+  document.getElementById("modalSteps").innerHTML = recipe.steps
+    .map(step => `<li>${escapeHtml(step)}</li>`)
+    .join("");
 
   const tipBox = document.getElementById("modalTip");
-  if (recipe.tip) { tipBox.hidden = false; tipBox.querySelector("p").textContent = recipe.tip; }
-  else { tipBox.hidden = true; }
+  tipBox.hidden = !recipe.tip;
+  tipBox.querySelector("p").textContent = recipe.tip || "";
 
   modal.hidden = false;
   modal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
+  document.body.classList.add("drawer-open");
+  pageContent.forEach(element => { element.inert = true; });
+  drawerPanel.scrollTop = 0;
 
-  if (typeof anime === "undefined" || prefersReduced) return;
-
-  const backdrop = modal.querySelector(".modal-backdrop");
-  const card = modal.querySelector(".modal-card");
-  const header = modal.querySelector(".modal-header");
-  const body = modal.querySelector(".modal-body");
-  const closeBtn = modal.querySelector(".modal-close");
-
-  anime.set(backdrop, { opacity: 0 });
-  anime.set(card, { opacity: 0, translateY: 40, scale: 0.88 });
-  anime.set([header, body, closeBtn], { opacity: 0, translateY: 14 });
-
-  anime.timeline()
-    .add({ targets: backdrop, opacity: [0, 1], duration: 250, easing: "linear" })
-    .add({ targets: card, opacity: [0, 1], translateY: [40, 0], scale: [0.88, 1], duration: 700, easing: "spring(1, 70, 12, 0)" }, "-=150")
-    .add({ targets: [header, body, closeBtn], opacity: [0, 1], translateY: [14, 0], duration: 500, delay: anime.stagger(80), easing: "spring(1, 80, 14, 0)" }, "-=400");
+  requestAnimationFrame(() => {
+    modal.classList.add("is-open");
+    modal.querySelector(".drawer-close").focus({ preventScroll: true });
+  });
 }
 
 function closeModal() {
-  if (typeof anime === "undefined" || prefersReduced) {
-    modal.hidden = true; modal.setAttribute("aria-hidden", "true"); document.body.style.overflow = "";
+  if (modal.hidden) return;
+
+  modal.classList.remove("is-open");
+
+  const finishClose = () => {
+    modal.setAttribute("aria-hidden", "true");
+    modal.hidden = true;
+    document.body.classList.remove("drawer-open");
+    pageContent.forEach(element => { element.inert = false; });
+    if (lastFocusedElement?.isConnected) {
+      lastFocusedElement.focus({ preventScroll: true });
+    }
+  };
+
+  if (reducedMotion) {
+    finishClose();
+  } else {
+    closeTimer = window.setTimeout(finishClose, 390);
+  }
+}
+
+function trapModalFocus(event) {
+  if (event.key !== "Tab" || modal.hidden) return;
+
+  const focusable = [...drawerPanel.querySelectorAll(
+    'button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )].filter(element => element.offsetParent !== null);
+
+  if (!focusable.length) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+function resetAllFilters() {
+  currentCategory = "all";
+  currentQuery = "";
+  searchInput.value = "";
+  searchClear.hidden = true;
+  updateCategories();
+  renderRecipes();
+  searchInput.focus();
+}
+
+searchInput.addEventListener("input", event => {
+  currentQuery = event.target.value;
+  searchClear.hidden = !currentQuery;
+  renderRecipes();
+});
+
+searchClear.addEventListener("click", () => {
+  currentQuery = "";
+  searchInput.value = "";
+  searchClear.hidden = true;
+  renderRecipes();
+  searchInput.focus();
+});
+
+resetFilter.addEventListener("click", resetAllFilters);
+
+modal.querySelectorAll("[data-close-modal]").forEach(element => {
+  element.addEventListener("click", closeModal);
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !modal.hidden) {
+    closeModal();
     return;
   }
-  if (isAnimatingOut) return;
-  isAnimatingOut = true;
-  const card = modal.querySelector(".modal-card");
-  const backdrop = modal.querySelector(".modal-backdrop");
-  anime({ targets: card, opacity: [1, 0], translateY: [0, 30], scale: [1, 0.9], duration: 350, easing: "easeInQuart" });
-  anime({
-    targets: backdrop, opacity: [1, 0], duration: 350, easing: "easeInQuart",
-    complete: () => { modal.hidden = true; modal.setAttribute("aria-hidden", "true"); document.body.style.overflow = ""; isAnimatingOut = false; }
-  });
-}
+  trapModalFocus(event);
+});
 
-modal.querySelector(".modal-close").addEventListener("click", closeModal);
-modal.querySelector(".modal-backdrop").addEventListener("click", closeModal);
-document.addEventListener("keydown", e => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
-
+document.getElementById("heroRecipeCount").textContent = String(recipes.length).padStart(2, "0");
 buildCategories();
 renderRecipes();
-
-if (typeof anime !== "undefined" && !prefersReduced) {
-  anime({
-    targets: ".hero-content > *",
-    opacity: [0, 1], translateY: [20, 0],
-    delay: anime.stagger(120), duration: 700, easing: "easeOutCubic"
-  });
-}
