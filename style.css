@@ -493,7 +493,6 @@ a {
 
 .recipe-card {
   position: relative;
-  min-height: 320px;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 7px;
@@ -505,10 +504,11 @@ a {
 .recipe-card::before {
   content: "";
   position: absolute;
-  top: 0;
+  top: auto;
   right: 0;
   bottom: 0;
-  width: 34%;
+  width: 44%;
+  height: 48%;
   background:
     radial-gradient(circle at 65% 35%, rgba(var(--card-rgb), 0.22), transparent 40%),
     linear-gradient(135deg, transparent 12%, rgba(var(--card-rgb), 0.08));
@@ -522,8 +522,9 @@ a {
   right: 26px;
   width: 58px;
   height: 58px;
-  border-top: 1px solid rgba(var(--card-rgb), 0.5);
-  border-right: 1px solid rgba(var(--card-rgb), 0.5);
+  z-index: 1;
+  border-top: 1px solid rgba(255, 255, 255, 0.72);
+  border-right: 1px solid rgba(255, 255, 255, 0.72);
   pointer-events: none;
 }
 
@@ -554,15 +555,38 @@ a {
   transform: translateY(-5px);
 }
 
+.card-media {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper-deep);
+}
+
+.card-media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 520ms cubic-bezier(0.2, 0.7, 0.2, 1), filter 280ms ease;
+}
+
+.recipe-card:hover .card-media img,
+.recipe-card:focus-within .card-media img {
+  filter: saturate(1.03);
+  transform: scale(1.025);
+}
+
 .card-content {
   position: relative;
   z-index: 1;
   width: 100%;
-  min-height: 318px;
+  min-height: 270px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 30px 32px 29px;
+  padding: 27px 30px 28px;
   text-align: left;
   pointer-events: none;
 }
@@ -603,18 +627,18 @@ a {
 
 .card-index {
   position: absolute;
-  top: 52px;
+  top: 25px;
   right: 29px;
   color: rgba(var(--card-rgb), 0.24);
   font-family: Georgia, serif;
-  font-size: 70px;
+  font-size: 58px;
   font-style: italic;
   line-height: 1;
 }
 
 .card-title {
-  max-width: 76%;
-  margin-top: 38px;
+  max-width: 88%;
+  margin-top: 31px;
   font-family: var(--serif);
   font-size: clamp(23px, 2.4vw, 31px);
   font-weight: 700;
@@ -623,7 +647,7 @@ a {
 }
 
 .card-desc {
-  max-width: 80%;
+  max-width: 92%;
   margin-top: 13px;
   color: var(--ink-soft);
   font-size: 13px;
@@ -632,7 +656,7 @@ a {
 
 .card-bottom {
   margin-top: auto;
-  padding-top: 28px;
+  padding-top: 24px;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -686,16 +710,16 @@ a {
 
 .card-fav {
   position: absolute;
-  right: 24px;
-  bottom: 74px;
+  top: 18px;
+  right: 18px;
   z-index: 3;
   width: 38px;
   height: 38px;
   display: grid;
   place-items: center;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 50%;
-  background: rgba(251, 248, 242, 0.82);
+  background: rgba(251, 248, 242, 0.9);
   color: var(--ink-soft);
   cursor: pointer;
   backdrop-filter: blur(6px);
@@ -948,15 +972,34 @@ a {
 .drawer-header {
   --drawer-rgb: 184, 89, 53;
   position: relative;
-  min-height: 390px;
+  min-height: 470px;
   overflow: hidden;
   display: grid;
   align-items: end;
   padding: 72px 58px 48px;
-  background:
-    radial-gradient(circle at 82% 22%, rgba(255, 255, 255, 0.36), transparent 28%),
-    linear-gradient(145deg, rgba(var(--drawer-rgb), 0.9), rgba(var(--drawer-rgb), 0.58));
+  background: rgb(var(--drawer-rgb));
   color: #fffaf3;
+  isolation: isolate;
+}
+
+.drawer-image {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.drawer-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(0deg, rgba(29, 24, 20, 0.88) 0%, rgba(29, 24, 20, 0.55) 46%, rgba(29, 24, 20, 0.08) 100%),
+    linear-gradient(90deg, rgba(var(--drawer-rgb), 0.32), transparent 76%);
 }
 
 .drawer-header::after {
@@ -966,8 +1009,8 @@ a {
   right: 30px;
   width: 130px;
   height: 130px;
-  border-top: 1px solid rgba(255, 255, 255, 0.4);
-  border-right: 1px solid rgba(255, 255, 255, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.52);
+  border-right: 1px solid rgba(255, 255, 255, 0.52);
 }
 
 .drawer-header[data-category="soup"] {
@@ -1000,6 +1043,7 @@ a {
 .drawer-heading {
   position: relative;
   z-index: 1;
+  text-shadow: 0 2px 20px rgba(28, 22, 18, 0.24);
 }
 
 .drawer-category {
@@ -1329,18 +1373,14 @@ a {
     gap: 14px;
   }
 
-  .recipe-card {
-    min-height: 300px;
-  }
-
   .card-content {
-    min-height: 298px;
-    padding: 26px 24px;
+    min-height: 252px;
+    padding: 24px;
   }
 
   .card-index {
     right: 23px;
-    font-size: 60px;
+    font-size: 52px;
   }
 
   .card-title {
@@ -1354,8 +1394,8 @@ a {
   }
 
   .card-fav {
-    right: 19px;
-    bottom: 67px;
+    top: 15px;
+    right: 15px;
   }
 
   .about {
@@ -1417,7 +1457,7 @@ a {
   }
 
   .drawer-header {
-    min-height: 350px;
+    min-height: 390px;
     padding: 76px 26px 36px;
   }
 

@@ -2,6 +2,7 @@ const recipes = [
   {
     id: 1,
     title: "番茄炒蛋",
+    image: "assets/recipes/tomato-eggs.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "15 分钟",
@@ -20,6 +21,7 @@ const recipes = [
   {
     id: 2,
     title: "炖番茄牛肋条（腐竹配菜）",
+    image: "assets/recipes/tomato-beef-yuba.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "1.5 小时",
@@ -38,6 +40,7 @@ const recipes = [
   {
     id: 3,
     title: "咖喱土豆牛肋条",
+    image: "assets/recipes/curry-beef.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "1.5 小时",
@@ -56,6 +59,7 @@ const recipes = [
   {
     id: 4,
     title: "清炖牛肋条（白胡椒白萝卜）",
+    image: "assets/recipes/clear-beef-radish.jpg",
     category: "soup",
     categoryLabel: "汤羹",
     time: "2 小时",
@@ -73,6 +77,7 @@ const recipes = [
   {
     id: 5,
     title: "梅菜蒸肉饼",
+    image: "assets/recipes/preserved-mustard-pork-patty.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "40 分钟",
@@ -91,6 +96,7 @@ const recipes = [
   {
     id: 6,
     title: "蒸鱼",
+    image: "assets/recipes/steamed-fish.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "25 分钟",
@@ -109,6 +115,7 @@ const recipes = [
   {
     id: 7,
     title: "手撕鸡",
+    image: "assets/recipes/shredded-chicken.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "45 分钟",
@@ -127,6 +134,7 @@ const recipes = [
   {
     id: 8,
     title: "凉拌牛肉",
+    image: "assets/recipes/cold-beef.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "1.5 小时",
@@ -145,6 +153,7 @@ const recipes = [
   {
     id: 9,
     title: "煎鸡中翅",
+    image: "assets/recipes/pan-fried-wings.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "35 分钟",
@@ -163,6 +172,7 @@ const recipes = [
   {
     id: 10,
     title: "蒜蓉粉丝蒸虾",
+    image: "assets/recipes/garlic-vermicelli-prawns.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "30 分钟",
@@ -181,6 +191,7 @@ const recipes = [
   {
     id: 11,
     title: "豉汁蒸排骨",
+    image: "assets/recipes/black-bean-ribs.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "60 分钟",
@@ -199,6 +210,7 @@ const recipes = [
   {
     id: 12,
     title: "腊味煲仔饭",
+    image: "assets/recipes/claypot-rice.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "55 分钟",
@@ -217,6 +229,7 @@ const recipes = [
   {
     id: 13,
     title: "蒜蓉蒸丝瓜",
+    image: "assets/recipes/garlic-steamed-loofah.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "20 分钟",
@@ -235,6 +248,7 @@ const recipes = [
   {
     id: 14,
     title: "节瓜瘦肉汤",
+    image: "assets/recipes/fuzzy-melon-pork-soup.jpg",
     category: "soup",
     categoryLabel: "汤羹",
     time: "50 分钟",
@@ -253,6 +267,7 @@ const recipes = [
   {
     id: 15,
     title: "榨菜蒸牛肉",
+    image: "assets/recipes/pickled-mustard-steamed-beef.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "25 分钟",
@@ -404,9 +419,20 @@ function cardTemplate(recipe) {
   const originalIndex = recipes.findIndex(item => item.id === recipe.id);
   const isFavorite = favoriteIds.has(recipe.id);
   const safeTitle = escapeHtml(recipe.title);
+  const safeImage = escapeHtml(recipe.image);
 
   return `
     <article class="recipe-card card-enter" data-category="${recipe.category}" data-recipe-id="${recipe.id}">
+      <figure class="card-media">
+        <img
+          src="${safeImage}"
+          alt="${safeTitle}的手绘插画"
+          width="1200"
+          height="800"
+          loading="${originalIndex < 2 ? "eager" : "lazy"}"
+          decoding="async"
+        >
+      </figure>
       <div class="card-content">
         <span class="card-topline">
           <span class="card-category">${escapeHtml(recipe.categoryLabel)} · RECIPE</span>
@@ -504,7 +530,10 @@ function openModal(recipe, trigger) {
 
   const recipeIndex = recipes.findIndex(item => item.id === recipe.id);
   const modalHeader = document.getElementById("modalHeader");
+  const modalImage = document.getElementById("modalImage");
   modalHeader.dataset.category = recipe.category;
+  modalImage.src = recipe.image;
+  modalImage.alt = `${recipe.title}的手绘插画`;
   document.getElementById("modalIndex").textContent = formatIndex(recipeIndex);
   document.getElementById("modalCategory").textContent = `${recipe.categoryLabel} · RECIPE`;
   document.getElementById("modalTitle").textContent = recipe.title;
