@@ -2,7 +2,7 @@ const recipes = [
   {
     id: 1,
     title: "番茄炒蛋",
-    image: "assets/recipes/tomato-eggs.jpg",
+    image: "assets/recipes/tomato-eggs-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "15 分钟",
@@ -21,7 +21,7 @@ const recipes = [
   {
     id: 2,
     title: "炖番茄牛肋条（腐竹配菜）",
-    image: "assets/recipes/tomato-beef-yuba.jpg",
+    image: "assets/recipes/tomato-beef-yuba-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "1.5 小时",
@@ -40,7 +40,7 @@ const recipes = [
   {
     id: 3,
     title: "咖喱土豆牛肋条",
-    image: "assets/recipes/curry-beef.jpg",
+    image: "assets/recipes/curry-beef-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "1.5 小时",
@@ -59,7 +59,7 @@ const recipes = [
   {
     id: 4,
     title: "清炖牛肋条（白胡椒白萝卜）",
-    image: "assets/recipes/clear-beef-radish.jpg",
+    image: "assets/recipes/clear-beef-radish-v2.jpg",
     category: "soup",
     categoryLabel: "汤羹",
     time: "2 小时",
@@ -77,7 +77,7 @@ const recipes = [
   {
     id: 5,
     title: "梅菜蒸肉饼",
-    image: "assets/recipes/preserved-mustard-pork-patty.jpg",
+    image: "assets/recipes/preserved-mustard-pork-patty-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "40 分钟",
@@ -96,7 +96,7 @@ const recipes = [
   {
     id: 6,
     title: "蒸鱼",
-    image: "assets/recipes/steamed-fish.jpg",
+    image: "assets/recipes/steamed-fish-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "25 分钟",
@@ -115,7 +115,7 @@ const recipes = [
   {
     id: 7,
     title: "手撕鸡",
-    image: "assets/recipes/shredded-chicken.jpg",
+    image: "assets/recipes/shredded-chicken-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "45 分钟",
@@ -134,7 +134,7 @@ const recipes = [
   {
     id: 8,
     title: "凉拌牛肉",
-    image: "assets/recipes/cold-beef.jpg",
+    image: "assets/recipes/cold-beef-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "1.5 小时",
@@ -153,7 +153,7 @@ const recipes = [
   {
     id: 9,
     title: "煎鸡中翅",
-    image: "assets/recipes/pan-fried-wings.jpg",
+    image: "assets/recipes/pan-fried-wings-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "35 分钟",
@@ -172,7 +172,7 @@ const recipes = [
   {
     id: 10,
     title: "蒜蓉粉丝蒸虾",
-    image: "assets/recipes/garlic-vermicelli-prawns.jpg",
+    image: "assets/recipes/garlic-vermicelli-prawns-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "30 分钟",
@@ -191,7 +191,7 @@ const recipes = [
   {
     id: 11,
     title: "豉汁蒸排骨",
-    image: "assets/recipes/black-bean-ribs.jpg",
+    image: "assets/recipes/black-bean-ribs-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "60 分钟",
@@ -210,7 +210,7 @@ const recipes = [
   {
     id: 12,
     title: "腊味煲仔饭",
-    image: "assets/recipes/claypot-rice.jpg",
+    image: "assets/recipes/claypot-rice-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "55 分钟",
@@ -229,7 +229,7 @@ const recipes = [
   {
     id: 13,
     title: "蒜蓉蒸丝瓜",
-    image: "assets/recipes/garlic-steamed-loofah.jpg",
+    image: "assets/recipes/garlic-steamed-loofah-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "20 分钟",
@@ -248,7 +248,7 @@ const recipes = [
   {
     id: 14,
     title: "节瓜瘦肉汤",
-    image: "assets/recipes/fuzzy-melon-pork-soup.jpg",
+    image: "assets/recipes/fuzzy-melon-pork-soup-v2.jpg",
     category: "soup",
     categoryLabel: "汤羹",
     time: "50 分钟",
@@ -267,7 +267,7 @@ const recipes = [
   {
     id: 15,
     title: "榨菜蒸牛肉",
-    image: "assets/recipes/pickled-mustard-steamed-beef.jpg",
+    image: "assets/recipes/pickled-mustard-steamed-beef-v2.jpg",
     category: "home",
     categoryLabel: "家常菜",
     time: "25 分钟",
@@ -282,6 +282,82 @@ const recipes = [
       "确认牛肉完全变色并熟透后立即取出，撒上葱花即可。"
     ],
     tip: "榨菜先冲洗可以减少盐分；牛肉要逆纹切薄并避免堆叠，蒸熟后立即出锅，口感才会嫩滑。"
+  },
+  {
+    id: 16,
+    title: "炒排骨",
+    image: "assets/recipes/stir-fried-ribs-v2.jpg",
+    category: "home",
+    categoryLabel: "家常菜",
+    time: "45 分钟",
+    difficulty: "中等",
+    desc: "不用油炸也能焦香入味，彩椒和洋葱清甜解腻",
+    ingredients: ["猪肋排 400克", "红彩椒 半个", "青彩椒 半个", "洋葱 四分之一个", "姜 3片", "蒜 2瓣", "生抽 1勺", "蚝油 半勺", "料酒 1勺", "米醋 半勺", "白糖 半小勺", "淀粉 1小勺", "食用油 1勺"],
+    steps: [
+      "排骨斩成约 3 厘米的小块，用清水浸泡 20 分钟去除血水，冲净后充分沥干。",
+      "排骨加入生抽、蚝油、料酒和淀粉抓匀，腌制 15 分钟；彩椒和洋葱切成适口块状。",
+      "平底锅放食用油，中小火把排骨各面煎至微黄，再放入姜片和蒜片炒香。",
+      "加入约 120 毫升热水，盖上锅盖用中小火焖 15 至 18 分钟，直至排骨熟透。",
+      "开盖收浓汤汁，放入彩椒和洋葱，加入米醋和白糖，大火翻炒 2 分钟即可。"
+    ],
+    tip: "排骨切小块更容易熟，也不需要油炸；出锅前确认最厚处和近骨位置都没有血水。"
+  },
+  {
+    id: 17,
+    title: "番茄百香果肥牛",
+    image: "assets/recipes/tomato-passionfruit-beef-v2.jpg",
+    category: "home",
+    categoryLabel: "家常菜",
+    time: "25 分钟",
+    difficulty: "简单",
+    desc: "番茄酸甜温润，百香果提香，肥牛清爽而不腻",
+    ingredients: ["肥牛卷 250克", "番茄 2个", "百香果 2个", "洋葱 四分之一个", "姜 2片", "葱花 少许", "清水 300毫升", "生抽 1勺", "白糖 半小勺", "盐 适量", "食用油 1小勺"],
+    steps: [
+      "番茄切块，洋葱切丝；百香果对半切开，挖出果肉备用。",
+      "锅中烧水，放入肥牛卷快速汆烫至完全变色，捞出后沥干浮沫。",
+      "另起锅放 1 小勺油，炒香姜片和洋葱，加入番茄翻炒至软并开始出汁。",
+      "加入清水、生抽和白糖，小火煮 6 至 8 分钟，让番茄汤味融合，再用盐调味。",
+      "放入肥牛煮约 30 秒后关火，最后拌入百香果肉，撒少许葱花即可。"
+    ],
+    tip: "百香果关火后再放，香气更清新，也不容易久煮发酸；先尝味道再决定是否加糖。"
+  },
+  {
+    id: 18,
+    title: "鸡丝凉拌面",
+    image: "assets/recipes/shredded-chicken-cold-noodles-v2.jpg",
+    category: "home",
+    categoryLabel: "家常菜",
+    time: "30 分钟",
+    difficulty: "简单",
+    desc: "鸡丝嫩、面条爽，芝麻醋汁清香开胃又不油腻",
+    ingredients: ["鲜面条 200克", "鸡胸肉 250克", "黄瓜 半根", "胡萝卜 半根", "姜 2片", "蒜 1瓣", "芝麻酱 1.5勺", "生抽 1勺", "香醋 1.5勺", "芝麻油 半小勺", "白糖 半小勺", "凉开水 2勺"],
+    steps: [
+      "鸡胸肉和姜片放入冷水中，煮开后转小火煮 10 至 12 分钟，关火加盖焖 5 分钟。",
+      "确认鸡肉中心完全熟透后捞出放凉，顺着纹理撕成细条；黄瓜和胡萝卜切丝。",
+      "蒜切末，与芝麻酱、生抽、香醋、芝麻油、白糖和凉开水搅匀成顺滑料汁。",
+      "面条煮熟后立即捞出，用凉开水冲凉并充分沥干，避免盘底积水。",
+      "面条加入鸡丝、黄瓜丝和胡萝卜丝，分次倒入料汁，拌匀后即可食用。"
+    ],
+    tip: "面条冲凉后一定要沥干，料汁才不会变淡；鸡肉放凉即可撕，不要长时间留在室温下。"
+  },
+  {
+    id: 19,
+    title: "培根蛋三明治",
+    image: "assets/recipes/bacon-egg-sandwich-v2.jpg",
+    category: "breakfast",
+    categoryLabel: "早餐",
+    time: "20 分钟",
+    difficulty: "简单",
+    desc: "焦香吐司夹着培根和鸡蛋，轻松做好两人早餐",
+    ingredients: ["吐司 4片", "培根 4片", "鸡蛋 2个", "生菜 4片", "番茄 半个", "蛋黄酱或无糖酸奶 2勺", "黑胡椒 少许"],
+    steps: [
+      "生菜洗净后充分擦干，番茄切薄片；处理生食后清洁砧板和双手。",
+      "平底锅不额外放油，小火把培根煎至熟透并微脆，夹出后用厨房纸吸去多余油脂。",
+      "利用锅中少量培根油煎鸡蛋，煎至蛋白和蛋黄都完全凝固，撒少许黑胡椒。",
+      "吐司两面烘至微黄，内侧薄薄抹上蛋黄酱或无糖酸奶。",
+      "依次铺上生菜、番茄、鸡蛋和培根，盖上另一片吐司，轻压后对角切开即可。"
+    ],
+    tip: "培根本身会出油，不需要再加食用油；生菜擦干、番茄不要切太厚，三明治更不容易湿软。"
   }
 ];
 
