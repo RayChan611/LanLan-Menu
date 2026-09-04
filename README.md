@@ -15,8 +15,10 @@
 
 ## 如何添加新菜谱
 
-编辑 [`script.js`](script.js) 中的 `recipes` 数组，按现有格式添加即可。每道菜的 `image` 字段指向对应图片，菜谱照片统一存放在 `assets/recipes/`，当前使用 1200×800 的 JPEG 文件以兼顾清晰度和加载速度。
+编辑 [`recipes.json`](recipes.json) 中的 `recipes` 数组，按现有格式添加即可。它是菜谱数据的唯一来源，也会被“栏栏日常”自动同步；请保持每道菜的 `id` 唯一且不要复用已经发布过的编号。
+
+每道菜的 `image` 字段指向对应图片，菜谱照片统一存放在 `assets/recipes/`，当前使用 1200×800 的 JPEG 文件以兼顾清晰度和加载速度。新增或修改菜谱后，先确认 JSON 语法正确，再一起提交菜谱数据和图片。
 
 ## 技术
 
-纯静态页面：HTML + CSS + JavaScript，部署在 GitHub Pages。
+纯静态页面：HTML + CSS + JavaScript，部署在 GitHub Pages。页面和“栏栏日常”共用公开的 [`recipes.json`](recipes.json)，不需要额外数据库或付费接口。
