@@ -528,24 +528,16 @@ a {
   pointer-events: none;
 }
 
-.recipe-card[data-category="home"] {
+.recipe-card[data-category="meat"] {
   --card-rgb: 163, 73, 45;
 }
 
-.recipe-card[data-category="soup"] {
+.recipe-card[data-category="vegetable"] {
   --card-rgb: 79, 114, 95;
 }
 
-.recipe-card[data-category="breakfast"] {
+.recipe-card[data-category="staple"] {
   --card-rgb: 139, 101, 31;
-}
-
-.recipe-card[data-category="dessert"] {
-  --card-rgb: 145, 72, 94;
-}
-
-.recipe-card[data-category="snack"] {
-  --card-rgb: 102, 93, 151;
 }
 
 .recipe-card:hover,
@@ -1013,20 +1005,12 @@ a {
   border-right: 1px solid rgba(255, 255, 255, 0.52);
 }
 
-.drawer-header[data-category="soup"] {
+.drawer-header[data-category="vegetable"] {
   --drawer-rgb: 74, 110, 94;
 }
 
-.drawer-header[data-category="breakfast"] {
+.drawer-header[data-category="staple"] {
   --drawer-rgb: 177, 123, 34;
-}
-
-.drawer-header[data-category="dessert"] {
-  --drawer-rgb: 160, 82, 104;
-}
-
-.drawer-header[data-category="snack"] {
-  --drawer-rgb: 91, 81, 138;
 }
 
 .drawer-index {

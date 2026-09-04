@@ -3,8 +3,8 @@ const recipes = [
     id: 1,
     title: "番茄炒蛋",
     image: "assets/recipes/tomato-eggs-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "vegetable",
+    categoryLabel: "素菜",
     time: "15 分钟",
     difficulty: "简单",
     desc: "酸甜下饭，三碗米饭起步的家常经典",
@@ -22,8 +22,8 @@ const recipes = [
     id: 2,
     title: "炖番茄牛肋条（腐竹配菜）",
     image: "assets/recipes/tomato-beef-yuba-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "1.5 小时",
     difficulty: "中等",
     desc: "番茄熬出沙，牛肋条软糯，腐竹吸饱汤汁",
@@ -41,8 +41,8 @@ const recipes = [
     id: 3,
     title: "咖喱土豆牛肋条",
     image: "assets/recipes/curry-beef-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "1.5 小时",
     difficulty: "中等",
     desc: "咖喱浓香裹着软烂牛肉，连土豆都入味",
@@ -60,8 +60,8 @@ const recipes = [
     id: 4,
     title: "清炖牛肋条（白胡椒白萝卜）",
     image: "assets/recipes/clear-beef-radish-v2.jpg",
-    category: "soup",
-    categoryLabel: "汤羹",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "2 小时",
     difficulty: "简单",
     desc: "白胡椒提鲜，汤清肉烂，一口暖到胃里",
@@ -78,8 +78,8 @@ const recipes = [
     id: 5,
     title: "梅菜蒸肉饼",
     image: "assets/recipes/preserved-mustard-pork-patty-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "40 分钟",
     difficulty: "简单",
     desc: "梅菜咸香入味，肉饼软嫩多汁，拌饭特别香",
@@ -97,8 +97,8 @@ const recipes = [
     id: 6,
     title: "蒸鱼",
     image: "assets/recipes/steamed-fish-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "25 分钟",
     difficulty: "中等",
     desc: "鱼肉细嫩鲜甜，热油一浇，葱姜香气立刻出来",
@@ -116,8 +116,8 @@ const recipes = [
     id: 7,
     title: "手撕鸡",
     image: "assets/recipes/shredded-chicken-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "45 分钟",
     difficulty: "简单",
     desc: "鸡肉嫩而不柴，麻油蒜香裹满每一缕鸡丝",
@@ -135,8 +135,8 @@ const recipes = [
     id: 8,
     title: "凉拌牛肉",
     image: "assets/recipes/cold-beef-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "1.5 小时",
     difficulty: "中等",
     desc: "牛肉紧实有嚼劲，酸辣料汁清爽开胃",
@@ -154,8 +154,8 @@ const recipes = [
     id: 9,
     title: "煎鸡中翅",
     image: "assets/recipes/pan-fried-wings-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "35 分钟",
     difficulty: "简单",
     desc: "外皮焦香，里面鲜嫩多汁，平底锅就能做好",
@@ -173,8 +173,8 @@ const recipes = [
     id: 10,
     title: "蒜蓉粉丝蒸虾",
     image: "assets/recipes/garlic-vermicelli-prawns-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "30 分钟",
     difficulty: "简单",
     desc: "虾肉鲜甜弹嫩，粉丝吸满蒜香和鲜美汤汁",
@@ -192,8 +192,8 @@ const recipes = [
     id: 11,
     title: "豉汁蒸排骨",
     image: "assets/recipes/black-bean-ribs-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "60 分钟",
     difficulty: "简单",
     desc: "排骨鲜嫩多汁，豆豉与蒜香浓郁入味",
@@ -211,8 +211,8 @@ const recipes = [
     id: 12,
     title: "腊味煲仔饭",
     image: "assets/recipes/claypot-rice-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "staple",
+    categoryLabel: "主食",
     time: "55 分钟",
     difficulty: "中等",
     desc: "米饭吸满腊味油香，锅底焦脆，配上菜心清甜解腻",
@@ -230,8 +230,8 @@ const recipes = [
     id: 13,
     title: "蒜蓉蒸丝瓜",
     image: "assets/recipes/garlic-steamed-loofah-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "vegetable",
+    categoryLabel: "素菜",
     time: "20 分钟",
     difficulty: "简单",
     desc: "丝瓜清甜柔嫩，蒜香鲜而不腻，少油也很入味",
@@ -249,8 +249,8 @@ const recipes = [
     id: 14,
     title: "节瓜瘦肉汤",
     image: "assets/recipes/fuzzy-melon-pork-soup-v2.jpg",
-    category: "soup",
-    categoryLabel: "汤羹",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "50 分钟",
     difficulty: "简单",
     desc: "汤味清甜温润，节瓜软嫩，少油又适合两人日常饮用",
@@ -268,8 +268,8 @@ const recipes = [
     id: 15,
     title: "榨菜蒸牛肉",
     image: "assets/recipes/pickled-mustard-steamed-beef-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "25 分钟",
     difficulty: "简单",
     desc: "牛肉嫩滑鲜香，榨菜爽脆提味，少油也很下饭",
@@ -287,8 +287,8 @@ const recipes = [
     id: 16,
     title: "炒排骨",
     image: "assets/recipes/stir-fried-ribs-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "45 分钟",
     difficulty: "中等",
     desc: "不用油炸也能焦香入味，彩椒和洋葱清甜解腻",
@@ -306,8 +306,8 @@ const recipes = [
     id: 17,
     title: "番茄百香果肥牛",
     image: "assets/recipes/tomato-passionfruit-beef-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "25 分钟",
     difficulty: "简单",
     desc: "番茄酸甜温润，百香果提香，肥牛清爽而不腻",
@@ -325,8 +325,8 @@ const recipes = [
     id: 18,
     title: "鸡丝凉拌面",
     image: "assets/recipes/shredded-chicken-cold-noodles-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "staple",
+    categoryLabel: "主食",
     time: "30 分钟",
     difficulty: "简单",
     desc: "鸡丝嫩、面条爽，芝麻醋汁清香开胃又不油腻",
@@ -344,8 +344,8 @@ const recipes = [
     id: 19,
     title: "培根蛋三明治",
     image: "assets/recipes/bacon-egg-sandwich-v2.jpg",
-    category: "breakfast",
-    categoryLabel: "早餐",
+    category: "staple",
+    categoryLabel: "主食",
     time: "20 分钟",
     difficulty: "简单",
     desc: "焦香吐司夹着培根和鸡蛋，轻松做好两人早餐",
@@ -363,8 +363,8 @@ const recipes = [
     id: 20,
     title: "擂椒皮蛋",
     image: "assets/recipes/smashed-pepper-century-eggs-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "vegetable",
+    categoryLabel: "素菜",
     time: "20 分钟",
     difficulty: "简单",
     desc: "虎皮青椒焦香微辣，拌上皮蛋酸香开胃",
@@ -382,8 +382,8 @@ const recipes = [
     id: 21,
     title: "辣椒炒肉",
     image: "assets/recipes/hunan-pepper-pork-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "meat",
+    categoryLabel: "荤菜",
     time: "25 分钟",
     difficulty: "简单",
     desc: "青椒焦香爽脆，肉片嫩而不腻，少油也很下饭",
@@ -401,8 +401,8 @@ const recipes = [
     id: 22,
     title: "饺子",
     image: "assets/recipes/cabbage-pork-dumplings-v2.jpg",
-    category: "home",
-    categoryLabel: "家常菜",
+    category: "staple",
+    categoryLabel: "主食",
     time: "45 分钟",
     difficulty: "简单",
     desc: "白菜清甜、肉馅鲜嫩，用现成饺子皮轻松包好两人份",
@@ -416,10 +416,95 @@ const recipes = [
       "饺子全部浮起、外皮微微鼓起后，切开一个确认肉馅完全熟透且没有粉红色，即可捞出食用。"
     ],
     tip: "白菜一定要攥去多余水分，馅料才不容易出水破皮；水煮过程不用额外放油。接触生肉后及时清洁双手和台面，包好的生饺子不要长时间放在室温下。"
+  },
+  {
+    id: 23,
+    title: "螺蛳粉",
+    image: "assets/recipes/luosifen-v2.jpg",
+    category: "staple",
+    categoryLabel: "主食",
+    time: "20 分钟",
+    difficulty: "简单",
+    desc: "酸笋爽脆、汤底鲜辣，二十分钟煮好两人份",
+    ingredients: ["袋装螺蛳粉 2份（含米粉和料包）", "青菜 150克", "豆腐泡 6个", "清水 约1.5升"],
+    steps: [
+      "拆开螺蛳粉包装，将花生、腐竹等脆口配料单独放好；青菜洗净，豆腐泡对半切开。",
+      "锅中烧足量水，放入米粉煮 8 至 10 分钟，至米粉柔软且没有硬芯，捞出沥干。",
+      "另取锅加入约 800 毫升清水，放入汤料、酸笋、酸豆角、木耳等湿料包和豆腐泡，煮开后再煮 3 分钟。",
+      "加入米粉煮约 1 分钟，再放入青菜烫至刚熟，连汤一起盛入两个碗中。",
+      "最后撒上花生和腐竹，辣椒油分次加入，先尝味道再决定是否全部放完。"
+    ],
+    tip: "不同品牌的米粉煮制时间不同，应优先参考包装说明；汤料和辣椒油的盐分、油量都较高，分次加入会更清爽。"
+  },
+  {
+    id: 24,
+    title: "螺蛳鸭脚煲",
+    image: "assets/recipes/snail-duck-feet-casserole-v2.jpg",
+    category: "meat",
+    categoryLabel: "荤菜",
+    time: "60 分钟",
+    difficulty: "中等",
+    desc: "酸笋与螺蛳汤鲜辣浓郁，免油炸也能煲到鸭脚软糯",
+    ingredients: ["预炸鸭脚 8只", "熟制螺蛳汤料 1袋（约400克）", "酸笋 100克", "芋头 250克", "豆腐泡 8个", "姜 3片", "蒜 4瓣", "干辣椒 3根（可选）", "清水 800毫升", "食用油 1小勺"],
+    steps: [
+      "预炸鸭脚用温水浸泡 20 分钟，待表皮稍微回软后洗净并沥干。",
+      "芋头去皮切成约 3 厘米的块，豆腐泡剪开一个小口；酸笋快速冲洗后充分沥干。",
+      "锅中放 1 小勺油，小火炒香姜片、蒜瓣、酸笋和干辣椒，注意不要把蒜炒焦。",
+      "加入熟制螺蛳汤料和清水煮开，放入鸭脚，盖上锅盖转小火煲 30 分钟。",
+      "加入芋头和豆腐泡，继续小火煲 15 至 20 分钟，直至芋头软糯、鸭脚完全热透。",
+      "关火后加盖焖 10 分钟，让鸭脚和豆腐泡继续吸收汤汁，再分装食用。"
+    ],
+    tip: "使用预炸鸭脚和正规熟制螺蛳汤料可以省去家庭油炸、处理活螺的麻烦；汤底通常已经有咸味，不要急着额外加盐。"
+  },
+  {
+    id: 25,
+    title: "咸香鸡",
+    image: "assets/recipes/salted-fragrant-chicken-v2.jpg",
+    category: "meat",
+    categoryLabel: "荤菜",
+    time: "60 分钟",
+    difficulty: "简单",
+    desc: "沙姜咸香渗入嫩滑鸡腿，蒸制少油又省事",
+    ingredients: ["鸡全腿 2只（约650克）", "盐焗鸡粉 12克", "沙姜粉 1小勺", "姜 4片", "葱 2根", "食用油 1小勺", "芝麻油 半小勺"],
+    steps: [
+      "鸡腿擦干表面水分，在肉厚处浅划两刀，方便受热和入味。",
+      "将盐焗鸡粉、沙姜粉和食用油调匀，均匀抹在鸡腿两面，盖好后放入冰箱冷藏腌制 30 分钟。",
+      "耐热盘铺上姜片和葱段，鸡腿皮朝上放好；蒸锅水开后放入，中火蒸 22 至 25 分钟。",
+      "关火焖 5 分钟，在最厚处确认中心温度达到 74℃，或切开后肉色完全变白、流出的汁水清澈；未熟则继续蒸 3 至 5 分钟。",
+      "鸡腿静置约 8 分钟后斩成小块，淋上盘中的少量鸡汁和芝麻油即可。"
+    ],
+    tip: "不同品牌的盐焗鸡粉咸度差别较大，第一次先少放；腌制必须冷藏，蒸熟后不要长时间留在室温下。"
+  },
+  {
+    id: 26,
+    title: "白切鸡",
+    image: "assets/recipes/white-cut-chicken-v2.jpg",
+    category: "meat",
+    categoryLabel: "荤菜",
+    time: "50 分钟",
+    difficulty: "中等",
+    desc: "皮爽肉嫩、清鲜不腻，蘸一点姜葱汁最经典",
+    ingredients: ["光鸡 半只（约750克）", "姜 1大块", "葱 3根", "盐 适量", "食用油 1大勺", "芝麻油 半小勺", "冰水 1大碗"],
+    steps: [
+      "半只鸡清理干净并沥干；姜切下 4 片，其余磨成姜蓉，葱白切段、葱绿切碎。",
+      "锅中加入足量清水、姜片和葱白，水开后放入鸡，水量以刚好没过鸡肉为宜。",
+      "水再次接近沸腾后转最小火，保持水面轻微冒泡，盖盖浸煮 18 至 20 分钟，中途翻面一次。",
+      "关火后继续加盖焖 12 分钟；在鸡腿最厚处确认中心温度达到 74℃，或切开后没有粉红色和血水，未熟则再小火煮 3 至 5 分钟。",
+      "捞出鸡放入冰水中降温 5 分钟，擦干后薄薄抹上芝麻油，静置片刻再斩件装盘。",
+      "姜蓉、葱绿和少许盐放入小碗，将食用油烧至微微冒烟后淋入拌匀，作为蘸汁。"
+    ],
+    tip: "浸煮时不要持续大滚，否则鸡肉容易变柴；冰水用于让鸡皮更爽，可使用凉开水加冰块，避免用未经处理的生水接触熟鸡。"
   }
 ];
 
+const CATEGORY_DEFINITIONS = [
+  { key: "meat", label: "荤菜" },
+  { key: "vegetable", label: "素菜" },
+  { key: "staple", label: "主食" }
+];
+
 const STORAGE_KEY = "lanlan-menu-favorites-v1";
+const IMAGE_VERSION = "restaurant-photo-v1";
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const grid = document.getElementById("recipesGrid");
@@ -479,16 +564,9 @@ function heartIcon() {
 }
 
 function categoryOptions() {
-  const categoryMap = new Map();
-  recipes.forEach(recipe => {
-    if (!categoryMap.has(recipe.category)) {
-      categoryMap.set(recipe.category, recipe.categoryLabel);
-    }
-  });
-
   return [
     { key: "all", label: "全部", count: recipes.length },
-    ...[...categoryMap].map(([key, label]) => ({
+    ...CATEGORY_DEFINITIONS.map(({ key, label }) => ({
       key,
       label,
       count: recipes.filter(recipe => recipe.category === key).length
@@ -553,14 +631,14 @@ function cardTemplate(recipe) {
   const originalIndex = recipes.findIndex(item => item.id === recipe.id);
   const isFavorite = favoriteIds.has(recipe.id);
   const safeTitle = escapeHtml(recipe.title);
-  const safeImage = escapeHtml(recipe.image);
+  const safeImage = escapeHtml(`${recipe.image}?v=${IMAGE_VERSION}`);
 
   return `
     <article class="recipe-card card-enter" data-category="${recipe.category}" data-recipe-id="${recipe.id}">
       <figure class="card-media">
         <img
           src="${safeImage}"
-          alt="${safeTitle}的手绘插画"
+          alt="${safeTitle}的菜谱照片"
           width="1200"
           height="800"
           loading="${originalIndex < 2 ? "eager" : "lazy"}"
@@ -666,8 +744,8 @@ function openModal(recipe, trigger) {
   const modalHeader = document.getElementById("modalHeader");
   const modalImage = document.getElementById("modalImage");
   modalHeader.dataset.category = recipe.category;
-  modalImage.src = recipe.image;
-  modalImage.alt = `${recipe.title}的手绘插画`;
+  modalImage.src = `${recipe.image}?v=${IMAGE_VERSION}`;
+  modalImage.alt = `${recipe.title}的菜谱照片`;
   document.getElementById("modalIndex").textContent = formatIndex(recipeIndex);
   document.getElementById("modalCategory").textContent = `${recipe.categoryLabel} · RECIPE`;
   document.getElementById("modalTitle").textContent = recipe.title;
