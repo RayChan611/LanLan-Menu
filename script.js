@@ -7,7 +7,7 @@ const CATEGORY_DEFINITIONS = [
 ];
 
 const STORAGE_KEY = "lanlan-menu-favorites-v1";
-const IMAGE_VERSION = "restaurant-photo-v1";
+const IMAGE_VERSION = "restaurant-photo-v3";
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const grid = document.getElementById("recipesGrid");
