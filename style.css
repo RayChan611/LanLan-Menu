@@ -1167,6 +1167,103 @@ a {
   background: var(--paper);
 }
 
+.recipe-detail-note,
+.recipe-detail-list,
+.soaking-list,
+.recipe-sources {
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.recipe-detail-note {
+  margin-top: 18px;
+}
+
+.soaking-list {
+  margin-top: 20px;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.soaking-list li {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.soaking-list li > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 18px;
+}
+
+.soaking-list strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.soaking-list span {
+  color: var(--accent-dark);
+  font-size: 13px;
+}
+
+.soaking-list p {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.recipe-detail-list {
+  padding-left: 20px;
+}
+
+.recipe-detail-list li + li {
+  margin-top: 14px;
+}
+
+.recipe-sources {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+}
+
+.recipe-sources summary {
+  cursor: pointer;
+  color: var(--accent-dark);
+}
+
+.recipe-sources p,
+.recipe-sources ul {
+  margin-top: 12px;
+}
+
+.recipe-sources ul {
+  padding-left: 18px;
+}
+
+.recipe-sources a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.recipe-details-close {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 30px;
+  padding: 12px 20px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
 .tip-label {
   color: var(--accent-dark);
   font-size: 10px;

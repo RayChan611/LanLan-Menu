@@ -149,6 +149,16 @@
             <h3 id="ingredientsTitle">准备食材</h3>
           </div>
           <ul id="modalIngredients"></ul>
+          <p class="recipe-detail-note" id="modalServings" hidden></p>
+        </section>
+
+        <section id="modalSoakingSection" aria-labelledby="soakingTitle" hidden>
+          <div class="drawer-section-title">
+            <span>前夜</span>
+            <h3 id="soakingTitle">提前浸泡</h3>
+          </div>
+          <p class="recipe-detail-note">以下是这套配方的浸泡安排，不代表所有机型都必须泡豆。浸泡不能代替煮熟；支持免泡干豆的机器请以说明书为准。</p>
+          <ul class="soaking-list" id="modalSoaking"></ul>
         </section>
 
         <section class="steps" aria-labelledby="stepsTitle">
@@ -159,10 +169,34 @@
           <ol id="modalSteps"></ol>
         </section>
 
+        <section id="modalBenefitsSection" aria-labelledby="benefitsTitle" hidden>
+          <div class="drawer-section-title">
+            <span>营养</span>
+            <h3 id="benefitsTitle">营养特点与早餐搭配</h3>
+          </div>
+          <ul class="recipe-detail-list" id="modalBenefits"></ul>
+        </section>
+
+        <section id="modalNotesSection" aria-labelledby="notesTitle" hidden>
+          <div class="drawer-section-title">
+            <span>提醒</span>
+            <h3 id="notesTitle">注意事项</h3>
+          </div>
+          <ul class="recipe-detail-list" id="modalNotes"></ul>
+        </section>
+
         <aside class="tip" id="modalTip" aria-labelledby="tipTitle" hidden>
           <span class="tip-label" id="tipTitle">栏栏的小贴士</span>
           <p></p>
         </aside>
+
+        <details class="recipe-sources" id="modalSourcesSection" hidden>
+          <summary>查看营养与食品安全参考</summary>
+          <p>配比来自提供的食谱图；营养说明是按食材特点整理，不是成品检测或治疗承诺。浸泡时长是家庭备餐安排，实际投料、加水与程序仍以机器说明书为准。</p>
+          <ul id="modalSources"></ul>
+        </details>
+
+        <button class="recipe-details-close" id="modalDetailsClose" type="button" data-close-modal hidden>收起菜谱</button>
       </div>
     </section>
   </div>

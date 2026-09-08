@@ -50,7 +50,16 @@ async function loadRecipeCatalog() {
     }
     ids.add(String(recipe.id));
   }
-  return payload.recipes;
+  return payload.recipes.map(recipe => {
+    const guide = payload.guides?.[recipe.guide];
+    if (!guide) return recipe;
+    return {
+      ...recipe,
+      servings: recipe.servings || guide.servings,
+      notes: [...(recipe.notes || []), ...(guide.notes || [])],
+      sources: [...(recipe.sources || []), ...(guide.sources || [])]
+    };
+  });
 }
 
 async function initialize() {
@@ -166,6 +175,7 @@ function getFilteredRecipes() {
       recipe.title,
       recipe.categoryLabel,
       recipe.desc,
+      ...(recipe.tags || []),
       ...recipe.ingredients
     ].join(" ").toLocaleLowerCase("zh-CN");
 
@@ -193,7 +203,7 @@ function cardTemplate(recipe) {
       </figure>
       <div class="card-content">
         <span class="card-topline">
-          <span class="card-category">${escapeHtml(recipe.categoryLabel)} · RECIPE</span>
+          <span class="card-category">${escapeHtml(recipe.categoryLabel)} · ${recipe.tags?.includes("早餐") ? "早餐" : "RECIPE"}</span>
         </span>
         <span class="card-index" aria-hidden="true">${formatIndex(originalIndex)}</span>
         <h3 class="card-title" id="recipe-title-${recipe.id}">${safeTitle}</h3>
@@ -293,7 +303,7 @@ function openModal(recipe, trigger) {
   modalImage.src = `${recipe.image}?v=${IMAGE_VERSION}`;
   modalImage.alt = `${recipe.title}的菜谱照片`;
   document.getElementById("modalIndex").textContent = formatIndex(recipeIndex);
-  document.getElementById("modalCategory").textContent = `${recipe.categoryLabel} · RECIPE`;
+  document.getElementById("modalCategory").textContent = `${recipe.categoryLabel} · ${recipe.tags?.join(" · ") || "RECIPE"}`;
   document.getElementById("modalTitle").textContent = recipe.title;
   document.getElementById("modalDescription").textContent = recipe.desc;
   document.getElementById("modalTime").textContent = recipe.time;
@@ -304,6 +314,36 @@ function openModal(recipe, trigger) {
   document.getElementById("modalSteps").innerHTML = recipe.steps
     .map(step => `<li>${escapeHtml(step)}</li>`)
     .join("");
+
+  const servings = document.getElementById("modalServings");
+  servings.hidden = !recipe.servings;
+  servings.textContent = recipe.servings || "";
+
+  const soaking = recipe.soaking || [];
+  document.getElementById("modalSoakingSection").hidden = soaking.length === 0;
+  document.getElementById("modalSoaking").innerHTML = soaking.map(item => `
+    <li>
+      <div><strong>${escapeHtml(item.ingredient)}</strong><span>${escapeHtml(item.duration)}</span></div>
+      <p>${escapeHtml(item.note)}</p>
+    </li>
+  `).join("");
+
+  for (const [field, name] of [["benefits", "Benefits"], ["notes", "Notes"]]) {
+    const items = recipe[field] || [];
+    document.getElementById(`modal${name}Section`).hidden = items.length === 0;
+    document.getElementById(`modal${name}`).innerHTML = items
+      .map(item => `<li>${escapeHtml(item)}</li>`).join("");
+  }
+
+  // 参考链接只接受安全的网页协议，切换菜谱时清空并折叠，避免残留上一道菜的信息。
+  const sources = (recipe.sources || []).filter(source => /^https:\/\//i.test(source.url));
+  const sourcesSection = document.getElementById("modalSourcesSection");
+  sourcesSection.hidden = sources.length === 0;
+  sourcesSection.open = false;
+  document.getElementById("modalSources").innerHTML = sources.map(source =>
+    `<li><a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.title)}（新窗口）</a></li>`
+  ).join("");
+  document.getElementById("modalDetailsClose").hidden = soaking.length === 0;
 
   const tipBox = document.getElementById("modalTip");
   tipBox.hidden = !recipe.tip;
@@ -347,7 +387,7 @@ function trapModalFocus(event) {
   if (event.key !== "Tab" || modal.hidden) return;
 
   const focusable = [...drawerPanel.querySelectorAll(
-    'button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    'button:not([disabled]), a[href], summary, input:not([disabled]), [tabindex]:not([tabindex="-1"])'
   )].filter(element => element.offsetParent !== null);
 
   if (!focusable.length) return;
