@@ -56,6 +56,22 @@ for (const [id, mix] of expected) {
   });
 }
 
+test("六款早餐均使用 720 ml 清水，并明确先加水后放食材", () => {
+  for (const [id] of expected) {
+    const recipe = catalog.recipes.find(item => item.id === id);
+    assert.equal(recipe.ingredients.filter(item => item.startsWith("清水")).length, 1);
+    assert.ok(recipe.ingredients.includes("清水 720 ml（先加水，再放食材；不含浸泡水）"));
+    assert.match(recipe.steps[0], /80 克干料/);
+    assert.match(recipe.steps[0], /720 ml 清水/);
+    assert.match(recipe.steps[2], /先量取 720 ml 清水倒入杯中，再放入处理好的全部食材/);
+    assert.match(recipe.steps[2], /不含食材及浸泡水/);
+    assert.match(recipe.steps[2], /不是放入食材后加水至 720 ml 刻度/);
+    assert.match(recipe.steps[2], /不超过热饮上限/);
+    assert.doesNotMatch(recipe.steps.join(" "), /按说明书该用量对应的水位加清水/);
+  }
+  assert.match(catalog.guides["blender-breakfast"].servings, /先加入 720 ml 清水，再放入/);
+});
+
 test("早餐共用说明包括机型限制、熟制、保存及可追溯的安全来源", () => {
   const guide = catalog.guides["blender-breakfast"];
   assert.match(guide.servings, /干料/);
