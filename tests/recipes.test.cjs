@@ -24,16 +24,14 @@ test("菜谱编号、分类、核心字段及图片引用完整", () => {
     assert.ok(fs.existsSync(path.join(root, recipe.image)), `${recipe.title} 的图片不存在`);
     if (recipe.guide) assert.ok(catalog.guides?.[recipe.guide], `${recipe.title} 的共用说明不存在`);
   }
-  assert.ok(!ids.has(18), "不要复用已经删除的鸡丝凉拌面编号");
+  for (const id of [18, 39, 40, 41, 43]) {
+    assert.ok(!ids.has(id), `不要复用已经删除的菜谱编号：${id}`);
+  }
 });
 
 const expected = [
   [38, { 黄豆: 22, 燕麦米: 14, 黄小米: 14, 花生: 12, 黑芝麻: 9, 黑豆: 9 }],
-  [39, { 黑豆: 20, 黑米: 16, 燕麦米: 16, 玉米糁: 10, 花生: 9, 黑芝麻: 9 }],
-  [40, { 赤小豆: 18, 燕麦米: 21, 玉米糁: 23, 花生: 9, 黑芝麻: 9 }],
-  [41, { 红小豆: 23, 燕麦米: 14, 黄小米: 16, 黄豆: 11, 黑芝麻: 9, 花生: 7 }],
-  [42, { 玉米糁: 23, 黄小米: 23, 燕麦米: 16, 黄豆: 11, 黑芝麻: 7 }],
-  [43, { 花生: 12, 黑豆: 14, 黑米: 14, 黄豆: 11, 燕麦米: 21, 黑芝麻: 8 }]
+  [42, { 玉米糁: 23, 黄小米: 23, 燕麦米: 16, 黄豆: 11, 黑芝麻: 7 }]
 ];
 
 for (const [id, mix] of expected) {
@@ -56,7 +54,7 @@ for (const [id, mix] of expected) {
   });
 }
 
-test("六款早餐均使用 720 ml 清水，并明确先加水后放食材", () => {
+test("两款早餐均使用 720 ml 清水，并明确先加水后放食材", () => {
   for (const [id] of expected) {
     const recipe = catalog.recipes.find(item => item.id === id);
     assert.equal(recipe.ingredients.filter(item => item.startsWith("清水")).length, 1);
