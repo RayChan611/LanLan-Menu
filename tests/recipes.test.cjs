@@ -24,7 +24,7 @@ test("菜谱编号、分类、核心字段及图片引用完整", () => {
     assert.ok(fs.existsSync(path.join(root, recipe.image)), `${recipe.title} 的图片不存在`);
     if (recipe.guide) assert.ok(catalog.guides?.[recipe.guide], `${recipe.title} 的共用说明不存在`);
   }
-  for (const id of [18, 39, 40, 41, 43]) {
+  for (const id of [18, 32, 33, 39, 40, 41, 43]) {
     assert.ok(!ids.has(id), `不要复用已经删除的菜谱编号：${id}`);
   }
 });
