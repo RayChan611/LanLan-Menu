@@ -1,9 +1,11 @@
 let recipes = [];
 
 const CATEGORY_DEFINITIONS = [
+  { key: "all", label: "全部" },
   { key: "meat", label: "荤菜" },
   { key: "vegetable", label: "素菜" },
-  { key: "staple", label: "主食" }
+  { key: "staple", label: "主食" },
+  { key: "favorites", label: "已收藏" }
 ];
 
 const STORAGE_KEY = "lanlan-menu-favorites-v1";
@@ -12,6 +14,9 @@ const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matc
 
 const grid = document.getElementById("recipesGrid");
 const emptyState = document.getElementById("emptyState");
+const loadError = document.getElementById("loadError");
+const retryLoad = document.getElementById("retryLoad");
+const heroRecipeCount = document.getElementById("heroRecipeCount");
 const catBar = document.getElementById("catBar");
 const searchInput = document.getElementById("searchInput");
 const searchClear = document.getElementById("searchClear");
@@ -28,6 +33,7 @@ let lastFocusedElement = null;
 let toastTimer = null;
 let closeTimer = null;
 let favoriteIds = new Set();
+let catalogLoading = false;
 
 async function loadRecipeCatalog() {
   const response = await fetch("recipes.json", { cache: "no-cache" });
@@ -63,21 +69,36 @@ async function loadRecipeCatalog() {
 }
 
 async function initialize() {
+  if (catalogLoading) return;
+  catalogLoading = true;
+  retryLoad.setAttribute("aria-disabled", "true");
+  retryLoad.textContent = "正在加载…";
+  countEl.textContent = "正在加载菜谱…";
+
   try {
     recipes = await loadRecipeCatalog();
     favoriteIds = loadFavorites();
-    document.getElementById("heroRecipeCount").textContent = String(recipes.length).padStart(2, "0");
+    heroRecipeCount.textContent = String(recipes.length);
     buildCategories();
     renderRecipes();
+    searchInput.disabled = false;
+    if (loadError.contains(document.activeElement)) {
+      catBar.querySelector(".cat-btn.active")?.focus({ preventScroll: true });
+    }
+    loadError.hidden = true;
   } catch (error) {
     console.error("菜谱加载失败：", error);
+    heroRecipeCount.textContent = "—";
     grid.hidden = true;
-    emptyState.hidden = false;
-    catBar.innerHTML = "";
+    emptyState.hidden = true;
+    catBar.replaceChildren();
+    searchInput.disabled = true;
     countEl.textContent = "菜谱暂时无法加载";
-    emptyState.querySelector("h3").textContent = "小厨房暂时连不上";
-    emptyState.querySelector("p").textContent = "请检查网络后刷新页面，已经保存的收藏不会丢失。";
-    resetFilter.hidden = true;
+    loadError.hidden = false;
+  } finally {
+    catalogLoading = false;
+    retryLoad.removeAttribute("aria-disabled");
+    retryLoad.textContent = "重试加载";
   }
 }
 
@@ -107,10 +128,6 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-function formatIndex(index) {
-  return String(index + 1).padStart(2, "0");
-}
-
 function heartIcon() {
   return `
     <svg aria-hidden="true" viewBox="0 0 24 24">
@@ -118,59 +135,47 @@ function heartIcon() {
     </svg>`;
 }
 
-function categoryOptions() {
-  return [
-    { key: "all", label: "全部", count: recipes.length },
-    ...CATEGORY_DEFINITIONS.map(({ key, label }) => ({
-      key,
-      label,
-      count: recipes.filter(recipe => recipe.category === key).length
-    })),
-    { key: "favorites", label: "已收藏", count: favoriteIds.size }
-  ];
-}
-
 function buildCategories() {
-  catBar.innerHTML = categoryOptions().map(category => `
+  catBar.innerHTML = CATEGORY_DEFINITIONS.map(category => `
     <button
-      class="cat-btn${currentCategory === category.key ? " active" : ""}"
+      class="cat-btn"
       type="button"
       data-category="${category.key}"
-      aria-pressed="${currentCategory === category.key}"
     >
-      ${category.label}<span class="cat-count">${category.count}</span>
+      ${category.label} <span class="cat-count"></span>
     </button>
   `).join("");
 
   catBar.querySelectorAll(".cat-btn").forEach(button => {
     button.addEventListener("click", () => {
       currentCategory = button.dataset.category;
-      updateCategories();
       renderRecipes();
     });
   });
 }
 
-function updateCategories() {
-  const options = new Map(categoryOptions().map(category => [category.key, category]));
-
+function updateCategories(searchMatches) {
   catBar.querySelectorAll(".cat-btn").forEach(button => {
-    const category = options.get(button.dataset.category);
-    const isActive = currentCategory === button.dataset.category;
+    const category = button.dataset.category;
+    const isActive = currentCategory === category;
     button.classList.toggle("active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
-    button.querySelector(".cat-count").textContent = category?.count ?? "0";
+    button.querySelector(".cat-count").textContent =
+      searchMatches.filter(recipe => matchesCategory(recipe, category)).length;
   });
 }
 
-function getFilteredRecipes() {
-  const query = currentQuery.trim().toLocaleLowerCase("zh-CN");
+function matchesCategory(recipe, category) {
+  if (category === "all") return true;
+  if (category === "favorites") return favoriteIds.has(recipe.id);
+  return recipe.category === category;
+}
+
+function getSearchMatches(query) {
+  const searchTerm = query.toLocaleLowerCase("zh-CN");
+  if (!searchTerm) return recipes;
 
   return recipes.filter(recipe => {
-    const matchesCategory = currentCategory === "all"
-      || (currentCategory === "favorites" && favoriteIds.has(recipe.id))
-      || recipe.category === currentCategory;
-
     const searchableText = [
       recipe.title,
       recipe.categoryLabel,
@@ -179,34 +184,30 @@ function getFilteredRecipes() {
       ...recipe.ingredients
     ].join(" ").toLocaleLowerCase("zh-CN");
 
-    return matchesCategory && (!query || searchableText.includes(query));
+    return searchableText.includes(searchTerm);
   });
 }
 
-function cardTemplate(recipe) {
-  const originalIndex = recipes.findIndex(item => item.id === recipe.id);
+function cardTemplate(recipe, index) {
   const isFavorite = favoriteIds.has(recipe.id);
   const safeTitle = escapeHtml(recipe.title);
   const safeImage = escapeHtml(`${recipe.image}?v=${IMAGE_VERSION}`);
 
   return `
-    <article class="recipe-card card-enter" data-category="${recipe.category}" data-recipe-id="${recipe.id}">
+    <article class="recipe-card card-enter" data-category="${escapeHtml(recipe.category)}" data-recipe-id="${escapeHtml(recipe.id)}">
       <figure class="card-media">
         <img
           src="${safeImage}"
           alt="${safeTitle}的菜谱照片"
           width="1200"
           height="800"
-          loading="${originalIndex < 2 ? "eager" : "lazy"}"
+          loading="${index < 2 ? "eager" : "lazy"}"
           decoding="async"
         >
       </figure>
       <div class="card-content">
-        <span class="card-topline">
-          <span class="card-category">${escapeHtml(recipe.categoryLabel)} · ${recipe.tags?.includes("早餐") ? "早餐" : "RECIPE"}</span>
-        </span>
-        <span class="card-index" aria-hidden="true">${formatIndex(originalIndex)}</span>
-        <h3 class="card-title" id="recipe-title-${recipe.id}">${safeTitle}</h3>
+        <span class="card-category">${escapeHtml(recipe.categoryLabel)}${recipe.tags?.includes("早餐") ? " · 早餐" : ""}</span>
+        <h3 class="card-title" id="recipe-title-${escapeHtml(recipe.id)}">${safeTitle}</h3>
         <p class="card-desc">${escapeHtml(recipe.desc)}</p>
         <span class="card-bottom">
           <span class="card-meta">
@@ -232,18 +233,29 @@ function cardTemplate(recipe) {
 }
 
 function renderRecipes() {
-  const filteredRecipes = getFilteredRecipes();
+  const query = currentQuery.trim();
+  const searchMatches = getSearchMatches(query);
+  const filteredRecipes = searchMatches.filter(recipe => matchesCategory(recipe, currentCategory));
+  updateCategories(searchMatches);
   grid.innerHTML = filteredRecipes.map(cardTemplate).join("");
   grid.hidden = filteredRecipes.length === 0;
   emptyState.hidden = filteredRecipes.length !== 0;
+  if (!filteredRecipes.length) {
+    const noFavorites = currentCategory === "favorites" && !favoriteIds.size;
+    emptyState.querySelector("h3").textContent = noFavorites ? "还没有收藏的菜谱" : "没找到这道菜";
+    emptyState.querySelector("p").textContent = noFavorites
+      ? "点菜谱右上角的爱心，就能在这里找到它。"
+      : "试试搜索食材、菜名，或切换菜谱分类。";
+    resetFilter.textContent = noFavorites ? "浏览全部菜谱" : "清除筛选";
+  }
 
-  const categoryName = categoryOptions().find(item => item.key === currentCategory)?.label || "全部";
-  countEl.textContent = currentQuery
-    ? `“${currentQuery.trim()}” · 找到 ${filteredRecipes.length} 道`
+  const categoryName = CATEGORY_DEFINITIONS.find(item => item.key === currentCategory).label;
+  countEl.textContent = query
+    ? `${categoryName} · “${query}” · ${filteredRecipes.length} 道`
     : `${categoryName} · ${filteredRecipes.length} 道`;
 
-  grid.querySelectorAll(".recipe-card").forEach(card => {
-    const recipe = recipes.find(item => item.id === Number(card.dataset.recipeId));
+  grid.querySelectorAll(".recipe-card").forEach((card, index) => {
+    const recipe = filteredRecipes[index];
     card.querySelector(".card-open").addEventListener("click", event => openModal(recipe, event.currentTarget));
     card.querySelector(".card-fav").addEventListener("click", event => toggleFavorite(recipe, event.currentTarget));
 
@@ -268,7 +280,6 @@ function toggleFavorite(recipe, button) {
   }
 
   saveFavorites();
-  updateCategories();
 
   if (currentCategory === "favorites") {
     renderRecipes();
@@ -277,6 +288,7 @@ function toggleFavorite(recipe, button) {
       nextTarget?.focus({ preventScroll: true });
     });
   } else {
+    updateCategories(getSearchMatches(currentQuery.trim()));
     button.classList.toggle("active", willFavorite);
     button.setAttribute("aria-pressed", String(willFavorite));
     button.setAttribute("aria-label", `${willFavorite ? "取消收藏" : "收藏"}${recipe.title}`);
@@ -296,14 +308,12 @@ function openModal(recipe, trigger) {
   window.clearTimeout(closeTimer);
   lastFocusedElement = trigger || document.activeElement;
 
-  const recipeIndex = recipes.findIndex(item => item.id === recipe.id);
   const modalHeader = document.getElementById("modalHeader");
   const modalImage = document.getElementById("modalImage");
   modalHeader.dataset.category = recipe.category;
   modalImage.src = `${recipe.image}?v=${IMAGE_VERSION}`;
   modalImage.alt = `${recipe.title}的菜谱照片`;
-  document.getElementById("modalIndex").textContent = formatIndex(recipeIndex);
-  document.getElementById("modalCategory").textContent = `${recipe.categoryLabel} · ${recipe.tags?.join(" · ") || "RECIPE"}`;
+  document.getElementById("modalCategory").textContent = [recipe.categoryLabel, ...(recipe.tags || [])].join(" · ");
   document.getElementById("modalTitle").textContent = recipe.title;
   document.getElementById("modalDescription").textContent = recipe.desc;
   document.getElementById("modalTime").textContent = recipe.time;
@@ -340,10 +350,10 @@ function openModal(recipe, trigger) {
   const sourcesSection = document.getElementById("modalSourcesSection");
   sourcesSection.hidden = sources.length === 0;
   sourcesSection.open = false;
+  document.getElementById("blenderSourcesNote").hidden = recipe.guide !== "blender-breakfast";
   document.getElementById("modalSources").innerHTML = sources.map(source =>
     `<li><a href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.title)}（新窗口）</a></li>`
   ).join("");
-  document.getElementById("modalDetailsClose").hidden = soaking.length === 0;
 
   const tipBox = document.getElementById("modalTip");
   tipBox.hidden = !recipe.tip;
@@ -408,7 +418,6 @@ function resetAllFilters() {
   currentQuery = "";
   searchInput.value = "";
   searchClear.hidden = true;
-  updateCategories();
   renderRecipes();
   searchInput.focus();
 }
@@ -428,6 +437,7 @@ searchClear.addEventListener("click", () => {
 });
 
 resetFilter.addEventListener("click", resetAllFilters);
+retryLoad.addEventListener("click", initialize);
 
 modal.querySelectorAll("[data-close-modal]").forEach(element => {
   element.addEventListener("click", closeModal);

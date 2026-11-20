@@ -224,7 +224,7 @@ a {
 /* 首屏 */
 .hero {
   position: relative;
-  min-height: min(720px, calc(100vh - var(--header-height) - 20px));
+  min-height: clamp(410px, 64vh, 560px);
   margin: 18px;
   overflow: hidden;
   border-radius: 8px;
@@ -249,7 +249,7 @@ a {
   align-items: flex-end;
   justify-content: space-between;
   gap: 48px;
-  padding: 72px 0 62px;
+  padding: 48px 0 46px;
 }
 
 .hero-copy {
@@ -267,14 +267,14 @@ a {
 
 .hero h1 {
   font-family: var(--serif);
-  font-size: clamp(54px, 7.4vw, 104px);
+  font-size: clamp(54px, 7vw, 96px);
   font-weight: 700;
   letter-spacing: 0.06em;
   line-height: 1.06;
 }
 
 .hero-intro {
-  margin-top: 25px;
+  margin-top: 18px;
   color: rgba(255, 250, 243, 0.88);
   font-family: var(--serif);
   font-size: clamp(15px, 1.5vw, 18px);
@@ -284,12 +284,13 @@ a {
 
 .hero-link {
   width: fit-content;
-  margin-top: 32px;
+  min-height: 44px;
+  margin-top: 20px;
   display: flex;
   align-items: center;
   gap: 24px;
   border-bottom: 1px solid rgba(255, 250, 243, 0.72);
-  padding-bottom: 8px;
+  padding-bottom: 4px;
   font-size: 13px;
   letter-spacing: 0.12em;
   transition: gap 220ms ease, border-color 220ms ease;
@@ -316,17 +317,8 @@ a {
   -webkit-backdrop-filter: blur(8px);
 }
 
-.note-label {
-  display: block;
-  color: var(--accent-dark);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-}
-
 .hero-note strong {
   display: block;
-  margin-top: 24px;
   font-family: var(--serif);
   font-size: 26px;
   font-weight: 700;
@@ -337,14 +329,14 @@ a {
 .note-rule {
   width: 100%;
   height: 1px;
-  margin: 24px 0 14px;
+  margin: 18px 0 12px;
   display: block;
   background: var(--line-strong);
 }
 
 .hero-note p {
   color: var(--ink-soft);
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.05em;
 }
 
@@ -352,7 +344,7 @@ a {
 .menu-section {
   width: min(1160px, calc(100% - 48px));
   margin: 0 auto;
-  padding: 112px 0 124px;
+  padding: 64px 0 100px;
 }
 
 .menu-heading {
@@ -376,13 +368,6 @@ a {
   line-height: 1.25;
 }
 
-.menu-lead {
-  margin-top: 12px;
-  color: var(--ink-soft);
-  font-size: 14px;
-  letter-spacing: 0.04em;
-}
-
 .search-box {
   height: 54px;
   display: flex;
@@ -394,7 +379,9 @@ a {
 }
 
 .search-box:focus-within {
-  border-color: var(--accent);
+  border-color: var(--accent-dark);
+  outline: 2px solid var(--accent-dark);
+  outline-offset: 3px;
 }
 
 .search-box svg {
@@ -412,15 +399,20 @@ a {
   border: 0;
   outline: 0;
   background: transparent;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .search-box input::placeholder {
   color: var(--ink-faint);
 }
 
+.search-box input::-webkit-search-cancel-button {
+  display: none;
+}
+
 .search-clear {
-  padding: 6px;
+  min-height: 44px;
+  padding: 6px 10px;
   background: transparent;
   color: var(--accent-dark);
   cursor: pointer;
@@ -428,26 +420,28 @@ a {
 }
 
 .filter-row {
-  min-height: 82px;
-  margin-top: 54px;
+  min-height: 68px;
+  margin-top: 32px;
+  padding: 8px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
+  gap: 24px;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
 
 .category-list {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 7px;
 }
 
 .cat-btn {
-  min-height: 38px;
-  padding: 0 16px;
-  border: 1px solid transparent;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
   border-radius: 999px;
   background: transparent;
   color: var(--ink-soft);
@@ -461,7 +455,6 @@ a {
 .cat-btn:focus-visible {
   border-color: var(--line-strong);
   color: var(--ink);
-  outline: none;
 }
 
 .cat-btn.active {
@@ -471,28 +464,37 @@ a {
 }
 
 .cat-btn .cat-count {
-  margin-left: 6px;
-  opacity: 0.8;
-  font-size: 10px;
+  margin-left: 2px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
 }
 
 .result-count {
-  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 48%;
   color: var(--ink-soft);
   font-family: var(--serif);
-  font-size: 13px;
-  letter-spacing: 0.08em;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .recipes-grid {
-  margin-top: 34px;
+  margin-top: 24px;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 22px;
 }
 
+.recipes-grid[hidden] {
+  display: none;
+}
+
 .recipe-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 7px;
@@ -510,8 +512,8 @@ a {
   width: 44%;
   height: 48%;
   background:
-    radial-gradient(circle at 65% 35%, rgba(var(--card-rgb), 0.22), transparent 40%),
-    linear-gradient(135deg, transparent 12%, rgba(var(--card-rgb), 0.08));
+    radial-gradient(circle at 65% 35%, rgba(var(--card-rgb), 0.14), transparent 40%),
+    linear-gradient(135deg, transparent 12%, rgba(var(--card-rgb), 0.05));
   pointer-events: none;
 }
 
@@ -573,12 +575,11 @@ a {
 .card-content {
   position: relative;
   z-index: 1;
-  width: 100%;
-  min-height: 270px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 27px 30px 28px;
+  padding: 22px 26px;
   text-align: left;
   pointer-events: none;
 }
@@ -597,40 +598,15 @@ a {
   outline-offset: -5px;
 }
 
-.card-topline {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 .card-category {
   color: rgb(var(--card-rgb));
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.16em;
 }
 
-.card-topline::after {
-  content: "";
-  width: 36px;
-  height: 1px;
-  background: rgba(var(--card-rgb), 0.55);
-}
-
-.card-index {
-  position: absolute;
-  top: 25px;
-  right: 29px;
-  color: rgba(var(--card-rgb), 0.24);
-  font-family: Georgia, serif;
-  font-size: 58px;
-  font-style: italic;
-  line-height: 1;
-}
-
 .card-title {
-  max-width: 88%;
-  margin-top: 31px;
+  margin-top: 8px;
   font-family: var(--serif);
   font-size: clamp(23px, 2.4vw, 31px);
   font-weight: 700;
@@ -639,20 +615,19 @@ a {
 }
 
 .card-desc {
-  max-width: 92%;
-  margin-top: 13px;
+  margin-top: 8px;
   color: var(--ink-soft);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.75;
 }
 
 .card-bottom {
   margin-top: auto;
-  padding-top: 24px;
+  padding-top: 16px;
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 24px;
+  gap: 12px;
 }
 
 .card-meta {
@@ -660,7 +635,7 @@ a {
   align-items: center;
   gap: 18px;
   color: var(--ink-soft);
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 0.05em;
 }
 
@@ -684,7 +659,7 @@ a {
   align-items: center;
   gap: 9px;
   color: rgb(var(--card-rgb));
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.08em;
   white-space: nowrap;
@@ -705,8 +680,8 @@ a {
   top: 18px;
   right: 18px;
   z-index: 3;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.72);
@@ -731,8 +706,14 @@ a {
 .card-fav:focus-visible {
   border-color: var(--accent);
   color: var(--accent);
-  outline: none;
   transform: scale(1.06);
+}
+
+.card-fav:focus-visible,
+.drawer-close:focus-visible {
+  outline-color: var(--accent-dark);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px var(--paper-light);
 }
 
 .card-fav.active {
@@ -778,23 +759,10 @@ a {
 }
 
 .empty-state {
-  margin-top: 34px;
-  padding: 90px 24px;
+  margin-top: 24px;
+  padding: clamp(28px, 7vw, 68px) 24px;
   border: 1px dashed var(--line-strong);
   text-align: center;
-}
-
-.empty-mark {
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 20px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--line-strong);
-  border-radius: 50%;
-  color: var(--accent);
-  font-family: var(--serif);
-  font-size: 27px;
 }
 
 .empty-state h3 {
@@ -805,17 +773,18 @@ a {
 .empty-state p {
   margin-top: 8px;
   color: var(--ink-soft);
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .empty-state button {
+  min-height: 44px;
   margin-top: 24px;
   padding: 11px 20px;
   border: 1px solid var(--ink);
   border-radius: 999px;
   background: transparent;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 14px;
   transition: background-color 180ms ease, color 180ms ease;
 }
 
@@ -823,6 +792,13 @@ a {
 .empty-state button:focus-visible {
   background: var(--ink);
   color: #fff;
+}
+
+.empty-state button[aria-disabled="true"] {
+  border-color: var(--line-strong);
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: wait;
 }
 
 /* 关于与页脚 */
@@ -957,7 +933,6 @@ a {
 .drawer-close:hover,
 .drawer-close:focus-visible {
   background: #fff;
-  outline: none;
   transform: rotate(6deg);
 }
 
@@ -1013,17 +988,6 @@ a {
   --drawer-rgb: 177, 123, 34;
 }
 
-.drawer-index {
-  position: absolute;
-  top: 50px;
-  left: 48px;
-  color: rgba(255, 255, 255, 0.17);
-  font-family: Georgia, serif;
-  font-size: 150px;
-  font-style: italic;
-  line-height: 1;
-}
-
 .drawer-heading {
   position: relative;
   z-index: 1;
@@ -1031,7 +995,7 @@ a {
 }
 
 .drawer-category {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.2em;
 }
@@ -1050,7 +1014,7 @@ a {
   max-width: 530px;
   margin-top: 13px;
   color: rgba(255, 250, 243, 0.92);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
 }
 
@@ -1068,7 +1032,7 @@ a {
 
 .drawer-meta dt {
   color: rgba(255, 250, 243, 0.86);
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.15em;
 }
 
@@ -1086,20 +1050,7 @@ a {
 }
 
 .drawer-section-title {
-  display: flex;
-  align-items: center;
-  gap: 14px;
   margin-bottom: 24px;
-}
-
-.drawer-section-title span {
-  color: var(--accent-dark);
-  font-family: Georgia, serif;
-  font-size: 12px;
-  font-style: italic;
-}
-
-.drawer-section-title h3 {
   font-family: var(--serif);
   font-size: 23px;
   font-weight: 700;
@@ -1117,7 +1068,7 @@ a {
   padding: 14px 8px 14px 0;
   border-bottom: 1px solid var(--line);
   color: var(--ink-soft);
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .ingredients li:nth-child(odd) {
@@ -1134,7 +1085,7 @@ a {
   min-height: 54px;
   padding: 0 0 26px 54px;
   color: var(--ink-soft);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.85;
   counter-increment: steps;
 }
@@ -1228,7 +1179,6 @@ a {
   margin-top: 28px;
   padding-top: 20px;
   border-top: 1px solid var(--line);
-  font-size: 12px;
 }
 
 .recipe-sources summary {
@@ -1266,7 +1216,7 @@ a {
 
 .tip-label {
   color: var(--accent-dark);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.16em;
 }
@@ -1274,7 +1224,7 @@ a {
 .tip p {
   margin-top: 8px;
   color: var(--ink-soft);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
 }
 
@@ -1305,7 +1255,7 @@ a {
 /* 平板 */
 @media (max-width: 900px) {
   .hero {
-    min-height: 650px;
+    min-height: clamp(400px, 61vh, 500px);
     background-position: 54% center;
   }
 
@@ -1319,15 +1269,11 @@ a {
 
   .menu-heading {
     grid-template-columns: 1fr;
-    gap: 34px;
+    gap: 20px;
   }
 
   .search-box {
     max-width: 520px;
-  }
-
-  .card-title {
-    max-width: 82%;
   }
 
   .about {
@@ -1377,7 +1323,8 @@ a {
   }
 
   .hero {
-    min-height: 610px;
+    min-height: clamp(350px, 48vh, 424px);
+    min-height: clamp(350px, 48svh, 424px);
     margin: 0;
     border-radius: 0;
     background-position: 57% center;
@@ -1385,17 +1332,17 @@ a {
 
   .hero-shade {
     background:
-      linear-gradient(0deg, rgba(28, 22, 18, 0.72) 0%, rgba(28, 22, 18, 0.13) 64%),
+      linear-gradient(0deg, rgba(28, 22, 18, 0.81) 0%, rgba(28, 22, 18, 0.13) 76%),
       linear-gradient(90deg, rgba(31, 26, 21, 0.18), transparent 70%);
   }
 
   .hero-inner {
     width: calc(100% - 40px);
-    padding: 48px 0 38px;
+    padding: 36px 0 26px;
   }
 
   .hero h1 {
-    font-size: clamp(49px, 15vw, 68px);
+    font-size: clamp(44px, 13vw, 62px);
     letter-spacing: 0.04em;
   }
 
@@ -1405,12 +1352,12 @@ a {
   }
 
   .hero-link {
-    margin-top: 24px;
+    margin-top: 12px;
   }
 
   .menu-section {
     width: calc(100% - 32px);
-    padding: 78px 0 88px;
+    padding: 38px 0 74px;
   }
 
   .menu-heading h2,
@@ -1420,58 +1367,45 @@ a {
 
   .filter-row {
     min-height: 0;
-    margin-top: 40px;
+    margin-top: 20px;
     display: block;
     border-bottom: 0;
-    padding: 16px 0 0;
+    padding: 12px 0 0;
   }
 
   .category-list {
-    width: calc(100vw - 16px);
-    margin-left: -8px;
-    overflow-x: auto;
-    padding: 0 8px 14px;
-    scrollbar-width: none;
-  }
-
-  .category-list::-webkit-scrollbar {
-    display: none;
+    gap: 6px;
+    padding-bottom: 12px;
   }
 
   .cat-btn {
     flex: 0 0 auto;
+    padding: 0 7px;
   }
 
   .result-count {
-    padding: 15px 0 0;
+    max-width: none;
+    padding: 10px 0 0;
     border-top: 1px solid var(--line);
-    text-align: right;
+    text-align: left;
   }
 
   .recipes-grid {
-    margin-top: 18px;
+    margin-top: 14px;
     grid-template-columns: 1fr;
     gap: 14px;
   }
 
-  .card-content {
-    min-height: 252px;
-    padding: 24px;
+  .card-media {
+    aspect-ratio: 16 / 9;
   }
 
-  .card-index {
-    right: 23px;
-    font-size: 52px;
+  .card-content {
+    padding: 16px 18px 18px;
   }
 
   .card-title {
-    max-width: 82%;
-    margin-top: 34px;
-    font-size: 25px;
-  }
-
-  .card-desc {
-    max-width: 86%;
+    font-size: 24px;
   }
 
   .card-fav {
@@ -1510,25 +1444,13 @@ a {
     left: 0;
     width: 100%;
     height: min(92vh, 900px);
+    height: min(92dvh, 900px);
     border-radius: 14px 14px 0 0;
     transform: translateY(100%);
   }
 
   .drawer.is-open .drawer-panel {
     transform: translateY(0);
-  }
-
-  .drawer-panel::before {
-    content: "";
-    position: absolute;
-    top: 9px;
-    left: 50%;
-    z-index: 4;
-    width: 38px;
-    height: 4px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.52);
-    transform: translateX(-50%);
   }
 
   .drawer-close {
@@ -1538,27 +1460,29 @@ a {
   }
 
   .drawer-header {
-    min-height: 390px;
-    padding: 76px 26px 36px;
-  }
-
-  .drawer-index {
-    top: 48px;
-    left: 20px;
-    font-size: 118px;
+    min-height: 295px;
+    padding: 72px 24px 24px;
   }
 
   .drawer-heading h2 {
-    padding-right: 20px;
-    font-size: 34px;
+    font-size: clamp(27px, 8vw, 34px);
   }
 
   .drawer-meta {
+    margin-top: 16px;
     gap: 28px;
   }
 
   .drawer-body {
-    padding: 42px 24px 64px;
+    padding: 30px 24px 40px;
+  }
+
+  .drawer-body > section + section {
+    margin-top: 36px;
+  }
+
+  .drawer-section-title {
+    margin-bottom: 16px;
   }
 
   .ingredients ul {
@@ -1567,6 +1491,16 @@ a {
 
   .ingredients li:nth-child(odd) {
     margin-right: 0;
+  }
+
+  .steps li {
+    min-height: 0;
+    padding: 0 0 20px 34px;
+    font-size: 16px;
+  }
+
+  .steps li:not(:last-child)::after {
+    left: 8px;
   }
 
   .toast {

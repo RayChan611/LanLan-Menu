@@ -53,21 +53,16 @@
         </div>
 
         <aside class="hero-note" aria-label="菜谱手账信息">
-          <span class="note-label">KITCHEN NOTE</span>
           <strong>家的味道<br>不用太复杂</strong>
           <span class="note-rule"></span>
-          <p><span id="heroRecipeCount">04</span> 道私房菜 · 慢慢更新</p>
+          <p><span id="heroRecipeCount">—</span> 道私房菜 · 慢慢更新</p>
         </aside>
       </div>
     </section>
 
     <section class="menu-section" id="recipes" aria-labelledby="recipesTitle">
       <div class="menu-heading">
-        <div>
-          <p class="eyebrow eyebrow-dark">RECIPES · 菜谱手账</p>
-          <h2 id="recipesTitle">今天想吃点什么？</h2>
-          <p class="menu-lead">按分类翻一翻，或者直接搜食材和菜名。</p>
-        </div>
+        <h2 id="recipesTitle">今天想吃点什么？</h2>
 
         <div class="search-box">
           <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
@@ -75,7 +70,7 @@
             <path d="m16 16 4 4"></path>
           </svg>
           <label class="sr-only" for="searchInput">搜索菜谱</label>
-          <input id="searchInput" type="search" placeholder="搜索菜名、食材…" autocomplete="off">
+          <input id="searchInput" type="search" placeholder="搜索菜名、食材…" autocomplete="off" disabled>
           <button class="search-clear" id="searchClear" type="button" aria-label="清空搜索" hidden>清除</button>
         </div>
       </div>
@@ -85,17 +80,22 @@
         <p class="result-count" id="recipeCount" aria-live="polite"></p>
       </div>
 
-      <section class="recipes-grid" id="recipesGrid" aria-label="菜谱列表"></section>
+      <section class="recipes-grid" id="recipesGrid" aria-label="菜谱列表" hidden></section>
 
       <noscript>
         <p class="noscript-message">请启用 JavaScript 以使用菜谱搜索、筛选和详情功能。</p>
       </noscript>
 
       <div class="empty-state" id="emptyState" hidden>
-        <span class="empty-mark" aria-hidden="true">?</span>
-        <h3>这一页还没写下答案</h3>
-        <p>换个菜名或食材试试，也可以回到全部菜谱。</p>
-        <button id="resetFilter" type="button">查看全部菜谱</button>
+        <h3>没找到这道菜</h3>
+        <p>试试搜索食材、菜名，或切换菜谱分类。</p>
+        <button id="resetFilter" type="button">清除筛选</button>
+      </div>
+
+      <div class="empty-state" id="loadError" hidden>
+        <h3>菜谱暂时无法加载</h3>
+        <p>请检查网络连接后再试。</p>
+        <button id="retryLoad" type="button">重试加载</button>
       </div>
     </section>
 
@@ -124,7 +124,6 @@
 
       <header class="drawer-header" id="modalHeader">
         <img class="drawer-image" id="modalImage" alt="" width="1200" height="800">
-        <div class="drawer-index" id="modalIndex" aria-hidden="true"></div>
         <div class="drawer-heading">
           <span class="drawer-category" id="modalCategory"></span>
           <h2 id="modalTitle">菜谱详情</h2>
@@ -144,44 +143,29 @@
 
       <div class="drawer-body">
         <section class="ingredients" aria-labelledby="ingredientsTitle">
-          <div class="drawer-section-title">
-            <span>01</span>
-            <h3 id="ingredientsTitle">准备食材</h3>
-          </div>
+          <h3 class="drawer-section-title" id="ingredientsTitle">准备食材</h3>
           <ul id="modalIngredients"></ul>
           <p class="recipe-detail-note" id="modalServings" hidden></p>
         </section>
 
         <section id="modalSoakingSection" aria-labelledby="soakingTitle" hidden>
-          <div class="drawer-section-title">
-            <span>前夜</span>
-            <h3 id="soakingTitle">提前浸泡</h3>
-          </div>
+          <h3 class="drawer-section-title" id="soakingTitle">提前浸泡</h3>
           <p class="recipe-detail-note">以下是这套配方的浸泡安排，不代表所有机型都必须泡豆。浸泡不能代替煮熟；支持免泡干豆的机器请以说明书为准。</p>
           <ul class="soaking-list" id="modalSoaking"></ul>
         </section>
 
         <section class="steps" aria-labelledby="stepsTitle">
-          <div class="drawer-section-title">
-            <span>02</span>
-            <h3 id="stepsTitle">开始制作</h3>
-          </div>
+          <h3 class="drawer-section-title" id="stepsTitle">开始制作</h3>
           <ol id="modalSteps"></ol>
         </section>
 
         <section id="modalBenefitsSection" aria-labelledby="benefitsTitle" hidden>
-          <div class="drawer-section-title">
-            <span>营养</span>
-            <h3 id="benefitsTitle">营养特点与早餐搭配</h3>
-          </div>
+          <h3 class="drawer-section-title" id="benefitsTitle">营养特点与早餐搭配</h3>
           <ul class="recipe-detail-list" id="modalBenefits"></ul>
         </section>
 
         <section id="modalNotesSection" aria-labelledby="notesTitle" hidden>
-          <div class="drawer-section-title">
-            <span>提醒</span>
-            <h3 id="notesTitle">注意事项</h3>
-          </div>
+          <h3 class="drawer-section-title" id="notesTitle">注意事项</h3>
           <ul class="recipe-detail-list" id="modalNotes"></ul>
         </section>
 
@@ -191,12 +175,12 @@
         </aside>
 
         <details class="recipe-sources" id="modalSourcesSection" hidden>
-          <summary>查看营养与食品安全参考</summary>
-          <p>配比来自提供的食谱图；营养说明是按食材特点整理，不是成品检测或治疗承诺。浸泡时长是家庭备餐安排，实际投料、加水与程序仍以机器说明书为准。</p>
+          <summary>查看参考资料</summary>
+          <p id="blenderSourcesNote" hidden>配比来自提供的食谱图；营养说明是按食材特点整理，不是成品检测或治疗承诺。浸泡时长是家庭备餐安排，实际投料、加水与程序仍以机器说明书为准。</p>
           <ul id="modalSources"></ul>
         </details>
 
-        <button class="recipe-details-close" id="modalDetailsClose" type="button" data-close-modal hidden>收起菜谱</button>
+        <button class="recipe-details-close" id="modalDetailsClose" type="button" data-close-modal>收起菜谱</button>
       </div>
     </section>
   </div>
